@@ -229,18 +229,23 @@
             </a>
           </div>
 
-          <!-- 商品 2: 滾珠油 -->
+          <!-- 商品 2: 滾珠油（依據測驗結果導流） -->
           <div class="bg-paperCard p-6 rounded-3xl border border-line shadow-salon flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span class="text-[10px] tracking-wider uppercase bg-sand px-2.5 py-0.5 rounded-full text-subtle font-medium border border-line/60">
-                接單製作 3-5 天
-              </span>
-              <h5 class="font-serif text-base font-medium text-ink mt-2">5ml 客製香氣滾珠油</h5>
-              <p class="text-xs text-subtle mt-1 font-light">以琥珀色鋼珠瓶調製，運費另計</p>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] tracking-wider uppercase bg-sand px-2.5 py-0.5 rounded-full text-subtle font-medium border border-line/60">
+                  接單現調 3-5 天
+                </span>
+                <span class="text-[10px] tracking-wider bg-amberLight text-amberAccent px-2 py-0.5 rounded-full font-medium border border-amberAccent/30">
+                  按靈感卡基底調製
+                </span>
+              </div>
+              <h5 class="font-serif text-base font-medium text-ink mt-2">5ml 靈感卡客製香氣滾珠油</h5>
+              <p class="text-xs text-subtle mt-1 font-light">以剛才測出的香調為基底 ｜ 附專屬名字標籤</p>
               <div class="text-sm font-semibold text-amberAccent mt-2">HK$98</div>
             </div>
             <button data-action="open-oil-modal" type="button" class="px-6 py-3 border border-line text-ink text-xs tracking-wider rounded-xl hover:bg-paper hover:border-ink transition font-medium cursor-pointer">
-              查詢預約
+              預約客製
             </button>
           </div>
 
@@ -281,7 +286,7 @@
 
   </div>
 
-  <!-- Modal 彈窗：支援雙按鈕並行 -->
+  <!-- Modal 彈窗 -->
   <div id="ui-modal-box" style="display: none;" class="fixed inset-0 bg-ink/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-paperCard rounded-3xl p-7 max-w-sm w-full shadow-float border border-line">
       <h4 id="ui-modal-title" class="font-serif text-lg font-medium text-ink mb-2"></h4>
@@ -322,7 +327,7 @@
       },
       {
         stepLabel: "氣味調性偏好",
-        title: "在香氣質地上，你直覺更受哪種觸感吸引？",
+        title: "在香氣質地上，你直 DEFAULT 更受哪種觸感吸引？",
         desc: "如同指尖撫摸布料般的肌理偏好",
         options: [
           { label: "沉穩、包覆感強的厚實溫暖", tone: "深層沉靜", tag: "沉實質樸" },
@@ -470,15 +475,34 @@
           btn.innerHTML = "<span>複製此靈感卡</span>";
         }, 2000);
       } else if (act === "open-oil-modal") {
-        var oilMsg = encodeURIComponent("你好，我想查詢並登記預約 5ml 客製香氣滾珠油（HK$98）：");
+        // 動態獲取測驗結果參數
+        var a0 = state.answers[0] || {};
+        var a1 = state.answers[1] || {};
+        var a2 = state.answers[2] || {};
+        var a3 = state.answers[3] || {};
+
+        var resultSummary = (a3.time || "日常轉場") + "・" + (a2.tone || "沉靜") + "・" + (a1.family ? a1.family.split(" ")[0] : "木質調");
+
+        var customMsg = encodeURIComponent(
+          "你好，我想預約 5ml 客製香氣滾珠油（HK$98）。\n我剛完成線上探索，測驗結果為：【" + resultSummary + "】。\n想以此為基底進行調製，請問如何安排？"
+        );
+
         openModalWithActions(
-          "5ml 客製香氣滾珠油 (HK$98)",
-          "<p>本產品為按單調配，確認原料現貨後於 3-5 個工作天內完成調製並寄出。</p><p class='text-[11px] text-subtle'>* 運費另計（支援順豐速運 / 易寄取）。</p>",
-          "<a href='https://wa.me/85261314101?text=" + oilMsg + "' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-[#25D366] text-white text-xs tracking-wider rounded-xl hover:opacity-90 transition font-medium shadow-sm flex items-center justify-center gap-2'>" +
-            "<span>WhatsApp 登記查詢</span>" +
+          "5ml 靈感卡客製香氣滾珠油 (HK$98)",
+          "<div class='space-y-2'>" +
+            "<div class='bg-sand/60 p-3 rounded-xl border border-line/70 text-ink'>" +
+              "<div class='text-[10px] text-subtle font-light'>已為你鎖定測驗偏好基底：</div>" +
+              "<div class='font-medium text-xs mt-0.5 text-amberAccent'>【" + resultSummary + "】</div>" +
+            "</div>" +
+            "<p class='text-[11px] text-muted leading-relaxed font-light'>" +
+              "由調香師按單現調，使用琥珀色鋼珠瓶盛裝，香氣濃度嚴格控制於 1–2% 親膚安全範圍。確認後於 3–5 個工作天內寄出（運費另計，支援順豐速運 / 易寄取）。" +
+            "</p>" +
+          "</div>",
+          "<a href='https://wa.me/85261314101?text=" + customMsg + "' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-[#25D366] text-white text-xs tracking-wider rounded-xl hover:opacity-90 transition font-medium shadow-sm flex items-center justify-center gap-2'>" +
+            "<span>以測驗結果 WhatsApp 預約</span>" +
           "</a>" +
           "<a href='https://ig.me/m/SCENTMIRAGE.LAB' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-paper border border-line text-ink text-xs tracking-wider rounded-xl hover:border-ink transition font-medium'>" +
-            "Instagram 私訊 (@SCENTMIRAGE.LAB)" +
+            "Instagram 私訊預約 (@SCENTMIRAGE.LAB)" +
           "</a>"
         );
       } else if (act === "open-ws-modal") {
