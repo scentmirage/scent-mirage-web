@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCENT MIRAGE × AromaMood ｜ 7日香氣轉場手札</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+TC:wght@400;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      background-color: #F5F1EA;
+      color: #302C28;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+    .font-serif-tc {
+      font-family: 'Noto Serif TC', serif;
+    }
+    .font-cormorant {
+      font-family: 'Cormorant Garamond', serif;
+    }
+  </style>
+</head>
+<body class="selection:bg-[#A87545]/20 selection:text-[#302C28]">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // 集中配置
+    const CONFIG = {
+      GUMROAD_JOURNAL_URL: "https://gumroad.com", 
+      ROLLER_CHECKOUT_URL: "", 
+      WORKSHOP_BOOKING_URL: "", 
+      OFFICIAL_EMAIL: "contact@scentmirage.com",
+      INSTAGRAM_HANDLE: "@SCENTMIRAGE.LAB"
+    };
+
+    const QUIZ_QUESTIONS = [
+      {
+        id: 1,
+        title: "生活節奏自述",
+        subtitle: "回想今天一整天的狀態，你此刻最真實的節奏是？",
+        options: [
+          { label: "待辦繁多，思緒難以停歇", tag: "切換段落" },
+          { label: "剛結束密集社交，想沉澱安靜", tag: "感官留白" },
+          { label: "正在多重角色與任務間頻繁轉換", tag: "邊界梳理" },
+          { label: "節奏平緩，只想為日常留一點純粹空白", tag: "感官覺察" }
+        ]
+      },
+      {
+        id: 2,
+        title: "香氣畫面聯想",
+        subtitle: "如果有一種氣味能代表你此刻渴望的空間感：",
+        options: [
+          { label: "乾燥的老木工作台與翻開的紙張墨香", family: "木質調 Woody" },
+          { label: "清晨帶露水的草葉茶與舒展的微風", family: "草本調 Herbal" },
+          { label: "灑滿溫暖陽光的窗台與清脆果皮", family: "柑橘調 Citrus" },
+          { label: "微風吹過開闊田野的乾燥草香與泥土", family: "大地清新 Earthy" }
+        ]
+      },
+      {
+        id: 3,
+        title: "氣味調性偏好",
+        subtitle: "在香氣質地上，你直覺更受哪種觸感吸引？",
+        options: [
+          { label: "沉穩、包覆感強的厚實溫暖", tone: "深層沉靜" },
+          { label: "通透、帶有空氣流通感的明亮清新", tone: "通透開闊" },
+          { label: "微苦、不甜膩的植物原生氣息", tone: "回甘質樸" },
+          { label: "溫和、像曬乾棉麻布料般的潔淨感", tone: "柔潤親膚" }
+        ]
+      },
+      {
+        id: 4,
+        title: "日常轉場時段",
+        subtitle: "你最想為一天中的哪一個時光，安放一個 3 分鐘小儀式？",
+        options: [
+          { label: "晨間出門前，為新的一天設定安定的錨點", time: "晨間開啟" },
+          { label: "工作結束時，合上電腦標記任務的段落", time: "公私界線" },
+          { label: "傍晚歸家後，洗淨喧囂與切換生活角色", time: "夜間收整" },
+          { label: "睡前熄燈前，讓大腦正式卸下所有重擔", time: "深夜留白" }
+        ]
+      }
+    ];
+
+    function App() {
+      const [step, setStep] = useState(0); 
+      const [answers, setAnswers] = useState({});
+      const [modalContent, setModalContent] = useState(null);
+      const [copied, setCopied] = useState(false);
+
+      const handleSelectOption = (qIndex, option) => {
+        setAnswers(prev => ({ ...prev, [qIndex]: option }));
+      };
+
+      const handleNext = () => {
+        if (step < QUIZ_QUESTIONS.length) {
+          setStep(step + 1);
+        }
+      };
+
+      const handlePrev = () => {
+        if (step > 1) {
+          setStep(step - 1);
+        } else if (step === 1) {
+          setStep(0);
+        }
+      };
+
+      const handleRestart = () => {
+        setAnswers({});
+        setStep(0);
+        setCopied(false);
+      };
+
+      const copyResult = () => {
+        const text = `【SCENT MIRAGE 香氣靈感卡】\n生活節奏：${answers[0]?.tag || "日常覺察"}\n偏好香調：${answers[1]?.family || "木質草本"}\n質感偏好：${answers[2]?.tone || "沉靜留白"}\n轉場時刻：${answers[3]?.time || "日常時段"}\n（本卡僅供個人感官探索，無醫療療效）`;
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col justify-between max-w-xl mx-auto px-5 py-8">
+          {/* Header */}
+          <header className="text-center mb-8 border-b border-[#D8CFC4]/60 pb-5">
+            <h1 className="font-cormorant text-2xl tracking-[0.25em] font-semibold uppercase text-[#302C28]">
+              SCENT MIRAGE
+            </h1>
+            <p className="font-serif-tc text-xs tracking-widest text-[#7D746B] mt-1">
+              獨立調香沙龍 ｜ 日常感官探索
+            </p>
+          </header>
+
+          {/* Main Container */}
+          <main className="flex-1 flex flex-col justify-center">
+            {step === 0 && (
+              <div className="bg-[#FAF8F5] border border-[#D8CFC4] rounded-2xl p-7 shadow-sm text-center">
+                <span className="inline-block px-3 py-1 bg-[#E9E1D5] text-[#7D746B] text-xs tracking-widest rounded-full mb-4">
+                  1 MINUTE RITUAL
+                </span>
+                <h2 className="font-serif-tc text-2xl font-semibold mb-3 text-[#302C28]">
+                  用 1 分鐘探索此刻偏好的香氣氛圍
+                </h2>
+                <p className="text-sm leading-relaxed text-[#7D746B] mb-6">
+                  生活在快節奏裡，氣味不是重整狀態的靈丹妙藥，而是一枚溫和的書籤。回答 4 個生活直覺問題，整理專屬於你的感官靈感卡。
+                </p>
+                <button
+                  onClick={() => setStep(1)}
+                  className="w-full py-3.5 bg-[#302C28] text-[#F5F1EA] text-sm tracking-widest rounded-xl hover:bg-[#453F3A] transition"
+                >
+                  開始香氣探索
+                </button>
+                <p className="text-[11px] text-[#7D746B]/80 mt-4 leading-normal">
+                  * 僅供個人感官生活記錄，不具醫療診斷或心理治療承諾。
+                </p>
+              </div>
+            )}
+
+            {step >= 1 && step <= QUIZ_QUESTIONS.length && (
+              <div className="bg-[#FAF8F5] border border-[#D8CFC4] rounded-2xl p-6 shadow-sm">
+                <div className="flex justify-between items-center mb-5 text-xs text-[#7D746B]">
+                  <span>步驟 {step} / {QUIZ_QUESTIONS.length}</span>
+                  <button onClick={handlePrev} className="underline hover:text-[#302C28]">上一題</button>
+                </div>
+
+                <h3 className="font-serif-tc text-xl font-semibold mb-1 text-[#302C28]">
+                  {QUIZ_QUESTIONS[step - 1].title}
+                </h3>
+                <p className="text-xs text-[#7D746B] mb-5">
+                  {QUIZ_QUESTIONS[step - 1].subtitle}
+                </p>
+
+                <div className="space-y-3 mb-6">
+                  {QUIZ_QUESTIONS[step - 1].options.map((opt, idx) => {
+                    const isSelected = answers[step - 1]?.label === opt.label;
+                    return (
+                      <div
+                        key={idx}
+                        onClick={() => handleSelectOption(step - 1, opt)}
+                        className={`p-4 rounded-xl border text-sm cursor-pointer transition flex items-center justify-between ${
+                          isSelected
+                            ? "border-[#A87545] bg-[#E9E1D5]/40 text-[#302C28] font-medium"
+                            : "border-[#D8CFC4]/80 bg-white/70 hover:border-[#7D746B] text-[#554E48]"
+                        }`}
+                      >
+                        <span>{opt.label}</span>
+                        {isSelected && <span className="text-[#A87545] text-xs">●</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <button
+                  disabled={!answers[step - 1]}
+                  onClick={handleNext}
+                  className={`w-full py-3 text-sm tracking-widest rounded-xl transition ${
+                    answers[step - 1]
+                      ? "bg-[#302C28] text-[#F5F1EA] hover:bg-[#453F3A]"
+                      : "bg-[#D8CFC4] text-[#7D746B] cursor-not-allowed"
+                  }`}
+                >
+                  {step === QUIZ_QUESTIONS.length ? "查看專屬香氣靈感卡" : "下一題"}
+                </button>
+              </div>
+            )}
+
+            {step > QUIZ_QUESTIONS.length && (
+              <div className="space-y-6">
+                {/* 靈感卡 */}
+                <div className="bg-[#FAF8F5] border border-[#A87545]/40 rounded-2xl p-6 shadow-sm relative">
+                  <div className="border-b border-[#D8CFC4] pb-4 mb-4">
+                    <span className="text-[11px] tracking-widest text-[#A87545] uppercase font-semibold">
+                      Scent Inspiration Card
+                    </span>
+                    <h3 className="font-serif-tc text-2xl font-semibold text-[#302C28] mt-1">
+                      {answers[3]?.time || "日常"}・{answers[1]?.family?.split(" ")[0] || "沉靜"}靈感
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 text-xs mb-5">
+                    <div className="bg-white/60 p-3 rounded-lg border border-[#D8CFC4]/60">
+                      <span className="text-[#7D746B] block mb-1">感官畫面聯想</span>
+                      <strong className="text-[#302C28]">{answers[1]?.family || "木質調"}</strong>
+                    </div>
+                    <div className="bg-white/60 p-3 rounded-lg border border-[#D8CFC4]/60">
+                      <span className="text-[#7D746B] block mb-1">觸感偏好</span>
+                      <strong className="text-[#302C28]">{answers[2]?.tone || "通透開闊"}</strong>
+                    </div>
+                  </div>
+
+                  <div className="text-xs text-[#7D746B] leading-relaxed border-t border-[#D8CFC4]/60 pt-3">
+                    前調：清新果皮微風 ｜ 中調：乾燥紙張與草葉 ｜ 後調：溫和原木質地<br />
+                    <span className="text-[10px] text-[#7D746B]/70 mt-1 block">
+                      * 上述香調為感官意象聯想，非直接皮膚塗抹處方。
+                    </span>
+                  </div>
+
+                  <div className="flex gap-2 mt-5">
+                    <button
+                      onClick={copyResult}
+                      className="flex-1 py-2 text-xs border border-[#302C28] text-[#302C28] rounded-lg hover:bg-white transition"
+                    >
+                      {copied ? "已複製到剪貼簿 ✓" : "複製此靈感卡"}
+                    </button>
+                    <button
+                      onClick={handleRestart}
+                      className="px-4 py-2 text-xs text-[#7D746B] hover:text-[#302C28]"
+                    >
+                      重新測驗
+                    </button>
+                  </div>
+                </div>
+
+                {/* 唯一核准之 3 項商品 */}
+                <div className="space-y-4">
+                  <h4 className="font-serif-tc text-sm font-semibold tracking-wider text-[#302C28]">
+                    將感官練習延續至日常生活
+                  </h4>
+
+                  {/* 商品 1: 手札 */}
+                  <div className="bg-white/80 border border-[#D8CFC4] p-5 rounded-xl flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] bg-[#E9E1D5] px-2 py-0.5 rounded text-[#7D746B]">即時數位下載</span>
+                      <h5 className="font-medium text-sm text-[#302C28] mt-1">《7 日香氣轉場手札》數位版</h5>
+                      <p className="text-xs text-[#7D746B] mt-0.5">含 12 頁手札 PDF + 真正 A6 尺寸隨身卡</p>
+                      <div className="text-sm font-semibold text-[#A87545] mt-2">HK$78</div>
+                    </div>
+                    <a
+                      href={CONFIG.GUMROAD_JOURNAL_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 bg-[#302C28] text-[#F5F1EA] text-xs rounded-lg hover:bg-[#453F3A]"
+                    >
+                      立即購買
+                    </a>
+                  </div>
+
+                  {/* 商品 2: 滾珠油 */}
+                  <div className="bg-white/80 border border-[#D8CFC4] p-5 rounded-xl flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] bg-[#E9E1D5] px-2 py-0.5 rounded text-[#7D746B]">接單製作 3-5 天</span>
+                      <h5 className="font-medium text-sm text-[#302C28] mt-1">5ml 客製香氣滾珠油</h5>
+                      <p className="text-xs text-[#7D746B] mt-0.5">以琥珀色鋼珠瓶調製，運費另計</p>
+                      <div className="text-sm font-semibold text-[#A87545] mt-2">HK$98</div>
+                    </div>
+                    <button
+                      onClick={() => setModalContent({
+                        title: "5ml 客製香氣滾珠油 (HK$98)",
+                        desc: "本產品為按單調配，確認原料包材現貨後於 3-5 個工作天內調製完成寄出。目前第一批樣品測試中，歡迎聯繫我們登記候補名額。"
+                      })}
+                      className="px-4 py-2 border border-[#302C28] text-[#302C28] text-xs rounded-lg hover:bg-white"
+                    >
+                      查詢預約
+                    </button>
+                  </div>
+
+                  {/* 商品 3: 工作坊 */}
+                  <div className="bg-white/80 border border-[#D8CFC4] p-5 rounded-xl flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] bg-[#E9E1D5] px-2 py-0.5 rounded text-[#7D746B]">實體創作體驗</span>
+                      <h5 className="font-medium text-sm text-[#302C28] mt-1">「心靈鏡像」調香工作坊</h5>
+                      <p className="text-xs text-[#7D746B] mt-0.5">90 分鐘獨立沙龍手作 ｜ 非心理治療</p>
+                      <div className="text-sm font-semibold text-[#A87545] mt-2">HK$380</div>
+                    </div>
+                    <button
+                      onClick={() => setModalContent({
+                        title: "心靈鏡像工作坊 (90分鐘 / HK$380)",
+                        desc: "以香氣與個人聯想為素材的創作型感官手作體驗，非醫療或心理諮商服務。如欲預約場次與確認人數名額，請點擊聯繫。"
+                      })}
+                      className="px-4 py-2 border border-[#302C28] text-[#302C28] text-xs rounded-lg hover:bg-white"
+                    >
+                      查詢場次
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+
+          {/* Modal */}
+          {modalContent && (
+            <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+              <div className="bg-[#FAF8F5] border border-[#D8CFC4] rounded-2xl p-6 max-w-sm w-full shadow-lg">
+                <h4 className="font-serif-tc text-lg font-semibold text-[#302C28] mb-2">{modalContent.title}</h4>
+                <p className="text-xs text-[#7D746B] leading-relaxed mb-6">{modalContent.desc}</p>
+                <div className="flex gap-2">
+                  <a
+                    href={`mailto:${CONFIG.OFFICIAL_EMAIL}?subject=查詢：${encodeURIComponent(modalContent.title)}`}
+                    className="flex-1 text-center py-2 bg-[#302C28] text-[#F5F1EA] text-xs rounded-lg hover:bg-[#453F3A]"
+                  >
+                    發送電郵查詢
+                  </a>
+                  <button
+                    onClick={() => setModalContent(null)}
+                    className="px-4 py-2 border border-[#D8CFC4] text-xs text-[#7D746B] rounded-lg hover:bg-white"
+                  >
+                    關閉
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Footer & Compliance */}
+          <footer className="mt-12 pt-6 border-t border-[#D8CFC4]/60 text-center text-[11px] text-[#7D746B] leading-relaxed space-y-3">
+            <p>
+              <strong>安全須知 Safety Notice：</strong><br />
+              本內容只供個人感官探索與生活記錄，不提供醫療診斷、心理治療或個人化健康建議，亦不保證任何生理或情緒效果。完成測驗或手札不需要使用精油。若使用香氛產品，請遵照產品標示並保持空氣流通；勿口服精油，亦勿將未稀釋精油塗抹於皮膚。
+            </p>
+            <p className="text-[10px] text-[#7D746B]/80">
+              © 2026 SCENT MIRAGE APOTHECARY. All Rights Reserved.
+            </p>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
