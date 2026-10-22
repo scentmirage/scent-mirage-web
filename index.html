@@ -229,7 +229,7 @@
             </a>
           </div>
 
-          <!-- 商品 2: 滾珠油（依據測驗結果導流） -->
+          <!-- 商品 2: 滾珠油 -->
           <div class="bg-paperCard p-6 rounded-3xl border border-line shadow-salon flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div class="flex items-center gap-2">
@@ -327,7 +327,7 @@
       },
       {
         stepLabel: "氣味調性偏好",
-        title: "在香氣質地上，你直 DEFAULT 更受哪種觸感吸引？",
+        title: "在香氣質地上，你直覺更受哪種觸感吸引？",
         desc: "如同指尖撫摸布料般的肌理偏好",
         options: [
           { label: "沉穩、包覆感強的厚實溫暖", tone: "深層沉靜", tag: "沉實質樸" },
@@ -475,7 +475,6 @@
           btn.innerHTML = "<span>複製此靈感卡</span>";
         }, 2000);
       } else if (act === "open-oil-modal") {
-        // 動態獲取測驗結果參數
         var a0 = state.answers[0] || {};
         var a1 = state.answers[1] || {};
         var a2 = state.answers[2] || {};
