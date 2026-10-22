@@ -329,4 +329,141 @@
         },
         {
           stepLabel: "日常轉場時段",
-          title
+          title: "你最想為一天中的哪一個時光，安放一個 3 分鐘小儀式？",
+          desc: "為生活標記一個具體、可落地的感官錨點",
+          options: [
+            { label: "晨間出門前，為新的一天設定安定的錨點", time: "晨間開啟", badge: "Morning Anchor" },
+            { label: "工作結束時，合上電腦標記任務的段落", time: "工作結尾", badge: "Closing Workday" },
+            { label: "傍晚歸家後，洗淨喧囂與切換生活角色", time: "傍晚轉場", badge: "Evening Transition" },
+            { label: "睡前熄燈前，讓大腦正式卸下所有重擔", time: "深夜留白", badge: "Night Rest" }
+          ]
+        }
+      ];
+
+      var step = 0;
+      var userAnswers = {};
+
+      function showStep(s) {
+        step = s;
+        document.getElementById("view-step-0").classList.add("hidden");
+        document.getElementById("view-step-quiz").classList.add("hidden");
+        document.getElementById("view-step-result").classList.add("hidden");
+
+        if (step === 0) {
+          document.getElementById("view-step-0").classList.remove("hidden");
+        } else if (step >= 1 && step <= 4) {
+          document.getElementById("view-step-quiz").classList.remove("hidden");
+          loadQuestion();
+        } else if (step === 5) {
+          document.getElementById("view-step-result").classList.remove("hidden");
+          loadResult();
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function loadQuestion() {
+        var q = QUIZ_DATA[step - 1];
+        document.getElementById("quiz-step-label").textContent = q.stepLabel;
+        document.getElementById("quiz-progress-num").textContent = "0" + step + " / 04";
+        document.getElementById("quiz-progress-bar").style.width = (step / 4 * 100) + "%";
+        document.getElementById("quiz-title").textContent = q.title;
+        document.getElementById("quiz-desc").textContent = q.desc;
+        document.getElementById("quiz-next-label").textContent = (step === 4) ? "查看專屬香氣靈感卡" : "下一題";
+
+        var container = document.getElementById("quiz-options-box");
+        container.innerHTML = "";
+
+        var currentSelected = userAnswers[step - 1];
+
+        q.options.forEach(function(opt) {
+          var isSel = currentSelected && currentSelected.label === opt.label;
+          var div = document.createElement("div");
+          div.className = "quiz-option p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 flex items-center justify-between border-line bg-paper/50 hover:bg-paper hover:border-muted/50 " + (isSel ? "active" : "");
+          
+          div.onclick = function() {
+            userAnswers[step - 1] = opt;
+            loadQuestion();
+          };
+
+          div.innerHTML = 
+            '<div>' +
+              '<div class="text-xs md:text-sm leading-relaxed ' + (isSel ? 'text-ink font-medium' : 'text-ink/90') + '">' + opt.label + '</div>' +
+              (opt.hint ? '<div class="text-[11px] text-subtle mt-0.5 font-light">' + opt.hint + '</div>' : '') +
+            '</div>' +
+            '<div class="check-dot w-5 h-5 rounded-full flex items-center justify-center border text-xs ml-3 shrink-0 border-line bg-white">' +
+              (isSel ? '✓' : '') +
+            '</div>';
+
+          container.appendChild(div);
+        });
+
+        var nextBtn = document.getElementById("btn-quiz-next");
+        if (currentSelected) {
+          nextBtn.disabled = false;
+          nextBtn.className = "w-full py-4 text-xs tracking-[0.25em] font-medium rounded-2xl transition duration-200 flex items-center justify-center gap-2 bg-ink text-paper hover:bg-ink/90 active:scale-[0.99] shadow-md cursor-pointer";
+        } else {
+          nextBtn.disabled = true;
+          nextBtn.className = "w-full py-4 text-xs tracking-[0.25em] font-medium rounded-2xl transition duration-200 flex items-center justify-center gap-2 bg-line/70 text-subtle/50 cursor-not-allowed";
+        }
+      }
+
+      function loadResult() {
+        var a0 = userAnswers[0] || {};
+        var a1 = userAnswers[1] || {};
+        var a2 = userAnswers[2] || {};
+        var a3 = userAnswers[3] || {};
+
+        var fam = (a1.family || "木質調").split(" ")[0];
+        document.getElementById("res-title").textContent = (a3.time || "日常") + "・" + fam + "靈感";
+        document.getElementById("res-tag").textContent = a0.tag || "日常覺察";
+        document.getElementById("res-family").textContent = a1.family || "木質調 Woody";
+        document.getElementById("res-tone").textContent = a2.tone || "通透開闊";
+        document.getElementById("res-top").textContent = a1.top || "苦橙葉";
+        document.getElementById("res-mid").textContent = a1.mid || "雪松與乾燥紙張";
+        document.getElementById("res-base").textContent = a1.base || "檀香木";
+      }
+
+      function openModal(t, d) {
+        document.getElementById("modal-title").textContent = t;
+        document.getElementById("modal-desc").textContent = d;
+        document.getElementById("modal-email").href = "mailto:contact@scentmirage.com?subject=" + encodeURIComponent(t);
+        document.getElementById("modal-box").classList.remove("hidden");
+      }
+
+      // 按鈕綁定
+      document.getElementById("btn-start").onclick = function() { showStep(1); };
+      document.getElementById("btn-prev").onclick = function() { showStep(step > 1 ? step - 1 : 0); };
+      document.getElementById("btn-quiz-next").onclick = function() { showStep(step === 4 ? 5 : step + 1); };
+      document.getElementById("btn-restart").onclick = function() { userAnswers = {}; showStep(0); };
+
+      document.getElementById("btn-copy-card").onclick = function() {
+        var a0 = userAnswers[0] || {};
+        var a1 = userAnswers[1] || {};
+        var a2 = userAnswers[2] || {};
+        var a3 = userAnswers[3] || {};
+        var text = "【SCENT MIRAGE 香氣靈感卡】\n生活節奏：" + (a0.tag || "日常覺察") + "\n偏好香調：" + (a1.family || "木質草本") + "\n質感偏好：" + (a2.tone || "沉靜留白") + "\n轉場時刻：" + (a3.time || "日常時段") + "\n（本卡僅供個人感官探索，無醫療療效）";
+        navigator.clipboard.writeText(text);
+
+        var btn = document.getElementById("btn-copy-card");
+        btn.innerHTML = "<span>已複製到剪貼簿 ✓</span>";
+        setTimeout(function() {
+          btn.innerHTML = "<span>複製此靈感卡</span>";
+        }, 2000);
+      };
+
+      document.getElementById("btn-oil-modal").onclick = function() {
+        openModal("5ml 客製香氣滾珠油 (HK$98)", "本產品為按單調配，確認原料包材現貨後於 3-5 個工作天內調製完成寄出。目前第一批樣品測試中，歡迎聯繫我們登記候補名額。");
+      };
+
+      document.getElementById("btn-ws-modal").onclick = function() {
+        openModal("心靈鏡像工作坊 (90分鐘 / HK$380)", "以香氣與個人聯想為素材的創作型感官手作體驗，非醫療或心理諮商服務。如欲預約場次與確認人數名額，請點擊聯繫。");
+      };
+
+      document.getElementById("btn-modal-close").onclick = function() {
+        document.getElementById("modal-box").classList.add("hidden");
+      };
+
+    })();
+  </script>
+</body>
+</html>
