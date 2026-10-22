@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SCENT MIRAGE × AromaMood ｜ 7日香氣轉場手札</title>
+  <title>SCENT MIRAGE × AromaMood ｜ 獨立調香沙龍與日常感官探索</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- React & ReactDOM -->
@@ -11,38 +11,67 @@
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <!-- Babel for JSX -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+TC:wght@400;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Noto+Serif+TC:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
   
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: '#F7F4EE',
+            sand: '#EFE9DE',
+            ink: '#2B2623',
+            muted: '#766D64',
+            line: '#DDD5C7',
+            amberAccent: '#9E6D38',
+            softClay: '#A46E5E',
+            olive: '#727B66'
+          },
+          fontFamily: {
+            serifTc: ['"Noto Serif TC"', 'serif'],
+            cormorant: ['"Cormorant Garamond"', 'serif'],
+            sansTc: ['"Noto Sans TC"', 'sans-serif']
+          },
+          boxShadow: {
+            'wabi': '0 10px 30px -10px rgba(43, 38, 35, 0.05), 0 1px 3px rgba(43, 38, 35, 0.03)',
+            'float': '0 20px 40px -15px rgba(43, 38, 35, 0.08), 0 0 1px rgba(43, 38, 35, 0.1)'
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
     body {
-      background-color: #F5F1EA;
-      color: #302C28;
+      background-color: #F7F4EE;
+      color: #2B2623;
       font-family: 'Noto Sans TC', sans-serif;
+      background-image: radial-gradient(#E8E1D2 0.75px, transparent 0.75px);
+      background-size: 24px 24px;
     }
-    .font-serif-tc {
-      font-family: 'Noto Serif TC', serif;
+    .wabi-card {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(221, 213, 199, 0.85);
     }
-    .font-cormorant {
-      font-family: 'Cormorant Garamond', serif;
+    .active-option {
+      background: rgba(239, 233, 222, 0.65);
+      border-color: #9E6D38 !important;
+      box-shadow: 0 0 0 1px #9E6D38 inset;
     }
   </style>
 </head>
-<body class="selection:bg-[#A87545]/20 selection:text-[#302C28]">
+<body class="selection:bg-amberAccent/20 selection:text-ink antialiased">
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect } = React;
+    const { useState } = React;
 
-    // 集中配置
     const CONFIG = {
       GUMROAD_JOURNAL_URL: "https://gumroad.com", 
-      ROLLER_CHECKOUT_URL: "", 
-      WORKSHOP_BOOKING_URL: "", 
       OFFICIAL_EMAIL: "contact@scentmirage.com",
       INSTAGRAM_HANDLE: "@SCENTMIRAGE.LAB"
     };
@@ -132,71 +161,90 @@
       };
 
       return (
-        <div className="min-h-screen flex flex-col justify-between max-w-xl mx-auto px-5 py-8">
+        <div className="min-h-screen flex flex-col justify-between max-w-xl mx-auto px-6 py-10 md:py-14">
           {/* Header */}
-          <header className="text-center mb-8 border-b border-[#D8CFC4]/60 pb-5">
-            <h1 className="font-cormorant text-2xl tracking-[0.25em] font-semibold uppercase text-[#302C28]">
+          <header className="text-center mb-10">
+            <div className="inline-block tracking-[0.35em] text-[11px] uppercase text-muted font-medium mb-1">
+              Apothecary Atelier
+            </div>
+            <h1 className="font-cormorant text-3xl md:text-4xl tracking-[0.22em] font-medium uppercase text-ink">
               SCENT MIRAGE
             </h1>
-            <p className="font-serif-tc text-xs tracking-widest text-[#7D746B] mt-1">
-              獨立調香沙龍 ｜ 日常感官探索
+            <div className="w-8 h-[1px] bg-line mx-auto my-3"></div>
+            <p className="font-serifTc text-xs tracking-widest text-muted font-light">
+              獨立調香沙龍 ｜ 日常感官留白
             </p>
           </header>
 
-          {/* Main Container */}
+          {/* Main Content Area */}
           <main className="flex-1 flex flex-col justify-center">
             {step === 0 && (
-              <div className="bg-[#FAF8F5] border border-[#D8CFC4] rounded-2xl p-7 shadow-sm text-center">
-                <span className="inline-block px-3 py-1 bg-[#E9E1D5] text-[#7D746B] text-xs tracking-widest rounded-full mb-4">
-                  1 MINUTE RITUAL
+              <div className="wabi-card rounded-3xl p-8 md:p-10 shadow-wabi text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amberAccent/40 to-transparent"></div>
+                
+                <span className="inline-block px-3.5 py-1 bg-sand/70 text-amberAccent text-[11px] tracking-widest font-medium rounded-full mb-6 border border-line/60">
+                  1-MINUTE SENSORY RITUAL
                 </span>
-                <h2 className="font-serif-tc text-2xl font-semibold mb-3 text-[#302C28]">
-                  用 1 分鐘探索此刻偏好的香氣氛圍
+                
+                <h2 className="font-serifTc text-2xl md:text-3xl font-normal leading-snug text-ink mb-4">
+                  用 1 分鐘探索<br className="hidden sm:inline" />此刻偏好的香氣氛圍
                 </h2>
-                <p className="text-sm leading-relaxed text-[#7D746B] mb-6">
-                  生活在快節奏裡，氣味不是重整狀態的靈丹妙藥，而是一枚溫和的書籤。回答 4 個生活直覺問題，整理專屬於你的感官靈感卡。
+                
+                <p className="text-xs md:text-sm leading-relaxed text-muted font-light max-w-md mx-auto mb-8">
+                  氣味不是重整狀態的靈丹妙藥，而是一枚溫和的感官提示——就像在翻閱下一頁之前輕放的書籤。回答 4 個生活直覺問題，整理專屬於你的留白靈感卡。
                 </p>
+
                 <button
                   onClick={() => setStep(1)}
-                  className="w-full py-3.5 bg-[#302C28] text-[#F5F1EA] text-sm tracking-widest rounded-xl hover:bg-[#453F3A] transition"
+                  className="w-full py-4 bg-ink text-paper text-xs tracking-[0.25em] font-medium rounded-2xl hover:bg-ink/90 transition shadow-sm active:scale-[0.99]"
                 >
                   開始香氣探索
                 </button>
-                <p className="text-[11px] text-[#7D746B]/80 mt-4 leading-normal">
+
+                <p className="text-[11px] text-muted/70 mt-5 leading-normal font-light">
                   * 僅供個人感官生活記錄，不具醫療診斷或心理治療承諾。
                 </p>
               </div>
             )}
 
             {step >= 1 && step <= QUIZ_QUESTIONS.length && (
-              <div className="bg-[#FAF8F5] border border-[#D8CFC4] rounded-2xl p-6 shadow-sm">
-                <div className="flex justify-between items-center mb-5 text-xs text-[#7D746B]">
-                  <span>步驟 {step} / {QUIZ_QUESTIONS.length}</span>
-                  <button onClick={handlePrev} className="underline hover:text-[#302C28]">上一題</button>
+              <div className="wabi-card rounded-3xl p-7 md:p-9 shadow-wabi relative">
+                {/* Progress bar */}
+                <div className="mb-7">
+                  <div className="flex justify-between items-center text-xs text-muted mb-2 font-light">
+                    <span className="tracking-widest">步驟 {step} / {QUIZ_QUESTIONS.length}</span>
+                    <button onClick={handlePrev} className="underline hover:text-ink transition text-[11px]">返回上一題</button>
+                  </div>
+                  <div className="w-full bg-sand/80 h-[2px] rounded-full overflow-hidden">
+                    <div 
+                      className="bg-amberAccent h-full transition-all duration-300 ease-out" 
+                      style={{ width: `${(step / QUIZ_QUESTIONS.length) * 100}%` }}
+                    ></div>
+                  </div>
                 </div>
 
-                <h3 className="font-serif-tc text-xl font-semibold mb-1 text-[#302C28]">
+                <h3 className="font-serifTc text-xl md:text-2xl font-normal text-ink mb-2">
                   {QUIZ_QUESTIONS[step - 1].title}
                 </h3>
-                <p className="text-xs text-[#7D746B] mb-5">
+                <p className="text-xs text-muted font-light leading-relaxed mb-6">
                   {QUIZ_QUESTIONS[step - 1].subtitle}
                 </p>
 
-                <div className="space-y-3 mb-6">
+                <div className="space-y-3 mb-8">
                   {QUIZ_QUESTIONS[step - 1].options.map((opt, idx) => {
                     const isSelected = answers[step - 1]?.label === opt.label;
                     return (
                       <div
                         key={idx}
                         onClick={() => handleSelectOption(step - 1, opt)}
-                        className={`p-4 rounded-xl border text-sm cursor-pointer transition flex items-center justify-between ${
+                        className={`p-4 rounded-2xl border text-xs md:text-sm cursor-pointer transition-all duration-200 flex items-center justify-between ${
                           isSelected
-                            ? "border-[#A87545] bg-[#E9E1D5]/40 text-[#302C28] font-medium"
-                            : "border-[#D8CFC4]/80 bg-white/70 hover:border-[#7D746B] text-[#554E48]"
+                            ? "active-option text-ink font-medium"
+                            : "border-line/70 bg-white/50 hover:bg-white/80 hover:border-muted/50 text-[#554E48]"
                         }`}
                       >
-                        <span>{opt.label}</span>
-                        {isSelected && <span className="text-[#A87545] text-xs">●</span>}
+                        <span className="leading-relaxed">{opt.label}</span>
+                        {isSelected && <span className="text-amberAccent text-xs ml-3">✦</span>}
                       </div>
                     );
                   })}
@@ -205,10 +253,10 @@
                 <button
                   disabled={!answers[step - 1]}
                   onClick={handleNext}
-                  className={`w-full py-3 text-sm tracking-widest rounded-xl transition ${
+                  className={`w-full py-3.5 text-xs tracking-[0.2em] font-medium rounded-2xl transition duration-200 ${
                     answers[step - 1]
-                      ? "bg-[#302C28] text-[#F5F1EA] hover:bg-[#453F3A]"
-                      : "bg-[#D8CFC4] text-[#7D746B] cursor-not-allowed"
+                      ? "bg-ink text-paper hover:bg-ink/90 active:scale-[0.99]"
+                      : "bg-line/60 text-muted/60 cursor-not-allowed"
                   }`}
                 >
                   {step === QUIZ_QUESTIONS.length ? "查看專屬香氣靈感卡" : "下一題"}
@@ -217,109 +265,120 @@
             )}
 
             {step > QUIZ_QUESTIONS.length && (
-              <div className="space-y-6">
+              <div className="space-y-8 animate-fade-in">
                 {/* 靈感卡 */}
-                <div className="bg-[#FAF8F5] border border-[#A87545]/40 rounded-2xl p-6 shadow-sm relative">
-                  <div className="border-b border-[#D8CFC4] pb-4 mb-4">
-                    <span className="text-[11px] tracking-widest text-[#A87545] uppercase font-semibold">
+                <div className="wabi-card rounded-3xl p-7 md:p-9 shadow-float border-amberAccent/30 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-amberAccent/5 rounded-full blur-2xl pointer-events-none"></div>
+
+                  <div className="border-b border-line pb-4 mb-5">
+                    <span className="font-cormorant text-xs tracking-[0.3em] text-amberAccent uppercase font-medium">
                       Scent Inspiration Card
                     </span>
-                    <h3 className="font-serif-tc text-2xl font-semibold text-[#302C28] mt-1">
+                    <h3 className="font-serifTc text-2xl font-normal text-ink mt-1.5">
                       {answers[3]?.time || "日常"}・{answers[1]?.family?.split(" ")[0] || "沉靜"}靈感
                     </h3>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 text-xs mb-5">
-                    <div className="bg-white/60 p-3 rounded-lg border border-[#D8CFC4]/60">
-                      <span className="text-[#7D746B] block mb-1">感官畫面聯想</span>
-                      <strong className="text-[#302C28]">{answers[1]?.family || "木質調"}</strong>
+                  <div className="grid grid-cols-2 gap-3 text-xs mb-6">
+                    <div className="bg-white/60 p-4 rounded-2xl border border-line/60">
+                      <span className="text-muted block text-[11px] mb-1 font-light">感官畫面聯想</span>
+                      <strong className="text-ink font-medium">{answers[1]?.family || "木質調"}</strong>
                     </div>
-                    <div className="bg-white/60 p-3 rounded-lg border border-[#D8CFC4]/60">
-                      <span className="text-[#7D746B] block mb-1">觸感偏好</span>
-                      <strong className="text-[#302C28]">{answers[2]?.tone || "通透開闊"}</strong>
+                    <div className="bg-white/60 p-4 rounded-2xl border border-line/60">
+                      <span className="text-muted block text-[11px] mb-1 font-light">觸感偏好</span>
+                      <strong className="text-ink font-medium">{answers[2]?.tone || "通透開闊"}</strong>
                     </div>
                   </div>
 
-                  <div className="text-xs text-[#7D746B] leading-relaxed border-t border-[#D8CFC4]/60 pt-3">
+                  <div className="text-xs text-muted leading-relaxed border-t border-line/60 pt-4 font-light">
                     前調：清新果皮微風 ｜ 中調：乾燥紙張與草葉 ｜ 後調：溫和原木質地<br />
-                    <span className="text-[10px] text-[#7D746B]/70 mt-1 block">
+                    <span className="text-[10px] text-muted/70 mt-1.5 block">
                       * 上述香調為感官意象聯想，非直接皮膚塗抹處方。
                     </span>
                   </div>
 
-                  <div className="flex gap-2 mt-5">
+                  <div className="flex gap-3 mt-6 pt-2">
                     <button
                       onClick={copyResult}
-                      className="flex-1 py-2 text-xs border border-[#302C28] text-[#302C28] rounded-lg hover:bg-white transition"
+                      className="flex-1 py-2.5 text-xs tracking-wider border border-ink/80 text-ink rounded-xl hover:bg-white transition"
                     >
                       {copied ? "已複製到剪貼簿 ✓" : "複製此靈感卡"}
                     </button>
                     <button
                       onClick={handleRestart}
-                      className="px-4 py-2 text-xs text-[#7D746B] hover:text-[#302C28]"
+                      className="px-4 py-2.5 text-xs text-muted hover:text-ink underline transition font-light"
                     >
                       重新測驗
                     </button>
                   </div>
                 </div>
 
-                {/* 唯一核准之 3 項商品 */}
-                <div className="space-y-4">
-                  <h4 className="font-serif-tc text-sm font-semibold tracking-wider text-[#302C28]">
-                    將感官練習延續至日常生活
-                  </h4>
+                {/* 3 大核准商品入口 */}
+                <div className="space-y-4 pt-2">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-amberAccent text-xs">✦</span>
+                    <h4 className="font-serifTc text-sm font-medium tracking-wider text-ink">
+                      將感官練習延續至日常生活
+                    </h4>
+                  </div>
 
                   {/* 商品 1: 手札 */}
-                  <div className="bg-white/80 border border-[#D8CFC4] p-5 rounded-xl flex justify-between items-center">
+                  <div className="wabi-card p-6 rounded-2xl shadow-wabi flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <span className="text-[10px] bg-[#E9E1D5] px-2 py-0.5 rounded text-[#7D746B]">即時數位下載</span>
-                      <h5 className="font-medium text-sm text-[#302C28] mt-1">《7 日香氣轉場手札》數位版</h5>
-                      <p className="text-xs text-[#7D746B] mt-0.5">含 12 頁手札 PDF + 真正 A6 尺寸隨身卡</p>
-                      <div className="text-sm font-semibold text-[#A87545] mt-2">HK$78</div>
+                      <span className="text-[10px] tracking-wider uppercase bg-sand/70 border border-line px-2.5 py-0.5 rounded-full text-muted font-medium">
+                        即時數位下載
+                      </span>
+                      <h5 className="font-serifTc text-base font-medium text-ink mt-2">《7 日香氣轉場手札》數位版</h5>
+                      <p className="text-xs text-muted mt-1 font-light">含 12 頁手札 PDF + 真正 A6 尺寸隨身卡</p>
+                      <div className="text-sm font-semibold text-amberAccent mt-2">HK$78</div>
                     </div>
                     <a
                       href={CONFIG.GUMROAD_JOURNAL_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2 bg-[#302C28] text-[#F5F1EA] text-xs rounded-lg hover:bg-[#453F3A]"
+                      className="text-center px-5 py-2.5 bg-ink text-paper text-xs tracking-widest rounded-xl hover:bg-ink/90 transition shadow-sm"
                     >
                       立即購買
                     </a>
                   </div>
 
                   {/* 商品 2: 滾珠油 */}
-                  <div className="bg-white/80 border border-[#D8CFC4] p-5 rounded-xl flex justify-between items-center">
+                  <div className="wabi-card p-6 rounded-2xl shadow-wabi flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <span className="text-[10px] bg-[#E9E1D5] px-2 py-0.5 rounded text-[#7D746B]">接單製作 3-5 天</span>
-                      <h5 className="font-medium text-sm text-[#302C28] mt-1">5ml 客製香氣滾珠油</h5>
-                      <p className="text-xs text-[#7D746B] mt-0.5">以琥珀色鋼珠瓶調製，運費另計</p>
-                      <div className="text-sm font-semibold text-[#A87545] mt-2">HK$98</div>
+                      <span className="text-[10px] tracking-wider uppercase bg-sand/70 border border-line px-2.5 py-0.5 rounded-full text-muted font-medium">
+                        接單製作 3-5 天
+                      </span>
+                      <h5 className="font-serifTc text-base font-medium text-ink mt-2">5ml 客製香氣滾珠油</h5>
+                      <p className="text-xs text-muted mt-1 font-light">以琥珀色鋼珠瓶調製，運費另計</p>
+                      <div className="text-sm font-semibold text-amberAccent mt-2">HK$98</div>
                     </div>
                     <button
                       onClick={() => setModalContent({
                         title: "5ml 客製香氣滾珠油 (HK$98)",
                         desc: "本產品為按單調配，確認原料包材現貨後於 3-5 個工作天內調製完成寄出。目前第一批樣品測試中，歡迎聯繫我們登記候補名額。"
                       })}
-                      className="px-4 py-2 border border-[#302C28] text-[#302C28] text-xs rounded-lg hover:bg-white"
+                      className="px-5 py-2.5 border border-line text-ink text-xs tracking-wider rounded-xl hover:bg-white hover:border-ink transition"
                     >
                       查詢預約
                     </button>
                   </div>
 
                   {/* 商品 3: 工作坊 */}
-                  <div className="bg-white/80 border border-[#D8CFC4] p-5 rounded-xl flex justify-between items-center">
+                  <div className="wabi-card p-6 rounded-2xl shadow-wabi flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <span className="text-[10px] bg-[#E9E1D5] px-2 py-0.5 rounded text-[#7D746B]">實體創作體驗</span>
-                      <h5 className="font-medium text-sm text-[#302C28] mt-1">「心靈鏡像」調香工作坊</h5>
-                      <p className="text-xs text-[#7D746B] mt-0.5">90 分鐘獨立沙龍手作 ｜ 非心理治療</p>
-                      <div className="text-sm font-semibold text-[#A87545] mt-2">HK$380</div>
+                      <span className="text-[10px] tracking-wider uppercase bg-sand/70 border border-line px-2.5 py-0.5 rounded-full text-muted font-medium">
+                        實體創作體驗
+                      </span>
+                      <h5 className="font-serifTc text-base font-medium text-ink mt-2">「心靈鏡像」調香工作坊</h5>
+                      <p className="text-xs text-muted mt-1 font-light">90 分鐘獨立沙龍手作 ｜ 非心理治療</p>
+                      <div className="text-sm font-semibold text-amberAccent mt-2">HK$380</div>
                     </div>
                     <button
                       onClick={() => setModalContent({
                         title: "心靈鏡像工作坊 (90分鐘 / HK$380)",
                         desc: "以香氣與個人聯想為素材的創作型感官手作體驗，非醫療或心理諮商服務。如欲預約場次與確認人數名額，請點擊聯繫。"
                       })}
-                      className="px-4 py-2 border border-[#302C28] text-[#302C28] text-xs rounded-lg hover:bg-white"
+                      className="px-5 py-2.5 border border-line text-ink text-xs tracking-wider rounded-xl hover:bg-white hover:border-ink transition"
                     >
                       查詢場次
                     </button>
@@ -331,20 +390,20 @@
 
           {/* Modal */}
           {modalContent && (
-            <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-              <div className="bg-[#FAF8F5] border border-[#D8CFC4] rounded-2xl p-6 max-w-sm w-full shadow-lg">
-                <h4 className="font-serif-tc text-lg font-semibold text-[#302C28] mb-2">{modalContent.title}</h4>
-                <p className="text-xs text-[#7D746B] leading-relaxed mb-6">{modalContent.desc}</p>
+            <div className="fixed inset-0 bg-ink/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+              <div className="wabi-card rounded-3xl p-7 max-w-sm w-full shadow-float border-line">
+                <h4 className="font-serifTc text-lg font-medium text-ink mb-2">{modalContent.title}</h4>
+                <p className="text-xs text-muted leading-relaxed mb-6 font-light">{modalContent.desc}</p>
                 <div className="flex gap-2">
                   <a
                     href={`mailto:${CONFIG.OFFICIAL_EMAIL}?subject=查詢：${encodeURIComponent(modalContent.title)}`}
-                    className="flex-1 text-center py-2 bg-[#302C28] text-[#F5F1EA] text-xs rounded-lg hover:bg-[#453F3A]"
+                    className="flex-1 text-center py-2.5 bg-ink text-paper text-xs tracking-wider rounded-xl hover:bg-ink/90 transition"
                   >
                     發送電郵查詢
                   </a>
                   <button
                     onClick={() => setModalContent(null)}
-                    className="px-4 py-2 border border-[#D8CFC4] text-xs text-[#7D746B] rounded-lg hover:bg-white"
+                    className="px-4 py-2.5 border border-line text-xs text-muted rounded-xl hover:bg-white transition"
                   >
                     關閉
                   </button>
@@ -354,12 +413,12 @@
           )}
 
           {/* Footer & Compliance */}
-          <footer className="mt-12 pt-6 border-t border-[#D8CFC4]/60 text-center text-[11px] text-[#7D746B] leading-relaxed space-y-3">
-            <p>
-              <strong>安全須知 Safety Notice：</strong><br />
+          <footer className="mt-14 pt-8 border-t border-line/70 text-center text-[11px] text-muted leading-relaxed space-y-4 font-light">
+            <p className="max-w-md mx-auto">
+              <strong className="font-medium text-ink">安全須知 Safety Notice：</strong><br />
               本內容只供個人感官探索與生活記錄，不提供醫療診斷、心理治療或個人化健康建議，亦不保證任何生理或情緒效果。完成測驗或手札不需要使用精油。若使用香氛產品，請遵照產品標示並保持空氣流通；勿口服精油，亦勿將未稀釋精油塗抹於皮膚。
             </p>
-            <p className="text-[10px] text-[#7D746B]/80">
+            <p className="text-[10px] text-muted/60 font-mono tracking-wider">
               © 2026 SCENT MIRAGE APOTHECARY. All Rights Reserved.
             </p>
           </footer>
