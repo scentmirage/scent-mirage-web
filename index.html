@@ -85,7 +85,7 @@
     <!-- 主工作區 -->
     <main class="flex-1 flex flex-col justify-center">
 
-      <!-- Step 0: 首頁引導 (預設可見) -->
+      <!-- Step 0: 首頁引導 -->
       <section id="pane-0" class="bg-paperCard rounded-3xl p-8 md:p-10 shadow-salon border border-line text-center relative overflow-hidden">
         <div class="w-12 h-12 bg-amberLight rounded-2xl flex items-center justify-center mx-auto mb-6 text-amberAccent border border-line/60">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,7 +112,7 @@
         </p>
       </section>
 
-      <!-- Step 1~4: 測驗區 (預設隱藏) -->
+      <!-- Step 1~4: 測驗區 -->
       <section id="pane-quiz" style="display: none;" class="bg-paperCard rounded-3xl p-7 md:p-9 shadow-salon border border-line relative">
         <div class="mb-6">
           <div class="flex justify-between items-center text-xs text-subtle mb-2.5">
@@ -148,7 +148,7 @@
         </button>
       </section>
 
-      <!-- Step 5: 結果頁 (預設隱藏) -->
+      <!-- Step 5: 結果頁 -->
       <section id="pane-result" style="display: none;" class="space-y-8">
         <!-- 靈感卡 -->
         <div class="bg-paperCard rounded-3xl p-7 md:p-9 shadow-float border border-line relative overflow-hidden">
@@ -247,15 +247,20 @@
           <!-- 商品 3: 工作坊 -->
           <div class="bg-paperCard p-6 rounded-3xl border border-line shadow-salon flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span class="text-[10px] tracking-wider uppercase bg-sand px-2.5 py-0.5 rounded-full text-subtle font-medium border border-line/60">
-                實體創作體驗
-              </span>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] tracking-wider uppercase bg-sand px-2.5 py-0.5 rounded-full text-subtle font-medium border border-line/60">
+                  實體創作體驗
+                </span>
+                <span class="text-[10px] tracking-wider bg-amberLight text-amberAccent px-2 py-0.5 rounded-full font-medium border border-amberAccent/30">
+                  近期場次：10/27 灣仔
+                </span>
+              </div>
               <h5 class="font-serif text-base font-medium text-ink mt-2">「心靈鏡像」調香工作坊</h5>
-              <p class="text-xs text-subtle mt-1 font-light">90 分鐘獨立沙龍手作 ｜ 非心理治療</p>
+              <p class="text-xs text-subtle mt-1 font-light">90 分鐘獨立沙龍手作 ｜ 10月27日 19:00 灣仔區</p>
               <div class="text-sm font-semibold text-amberAccent mt-2">HK$380</div>
             </div>
-            <button data-action="open-ws-modal" type="button" class="px-6 py-3 border border-line text-ink text-xs tracking-wider rounded-xl hover:bg-paper hover:border-ink transition font-medium cursor-pointer">
-              查詢場次
+            <button data-action="open-ws-modal" type="button" class="px-6 py-3 bg-ink text-paper border border-ink text-xs tracking-wider rounded-xl hover:bg-ink/90 transition font-medium cursor-pointer shadow-sm">
+              預約席位
             </button>
           </div>
         </div>
@@ -276,23 +281,21 @@
 
   </div>
 
-  <!-- Modal 彈窗 -->
+  <!-- Modal 彈窗：支援雙按鈕並行 -->
   <div id="ui-modal-box" style="display: none;" class="fixed inset-0 bg-ink/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-paperCard rounded-3xl p-7 max-w-sm w-full shadow-float border border-line">
       <h4 id="ui-modal-title" class="font-serif text-lg font-medium text-ink mb-2"></h4>
-      <p id="ui-modal-desc" class="text-xs text-muted leading-relaxed mb-6 font-light"></p>
-      <div class="flex gap-2">
-        <a id="ui-modal-email" href="#" class="flex-1 text-center py-3 bg-ink text-paper text-xs tracking-wider rounded-xl hover:bg-ink/90 transition font-medium">
-          發送電郵查詢
-        </a>
-        <button data-action="close-modal" type="button" class="px-4 py-3 border border-line text-xs text-subtle rounded-xl hover:bg-paper transition cursor-pointer">
-          關閉
-        </button>
-      </div>
+      <div id="ui-modal-body" class="text-xs text-muted leading-relaxed mb-6 font-light space-y-2"></div>
+      
+      <!-- 雙按鈕群組 -->
+      <div id="ui-modal-actions" class="space-y-2"></div>
+
+      <button data-action="close-modal" type="button" class="w-full mt-3 py-2.5 border border-line text-xs text-subtle rounded-xl hover:bg-paper transition cursor-pointer font-light">
+        關閉
+      </button>
     </div>
   </div>
 
-  <!-- 終極健壯邏輯：無任何外部依賴，純原生事件代理 -->
   <script>
     var QUIZ_DATA = [
       {
@@ -426,14 +429,14 @@
       document.getElementById("ui-res-base").innerText = a1.base || "檀香木";
     }
 
-    function popModal(title, desc) {
+    function openModalWithActions(title, contentHtml, actionsHtml) {
       document.getElementById("ui-modal-title").innerText = title;
-      document.getElementById("ui-modal-desc").innerText = desc;
-      document.getElementById("ui-modal-email").href = "mailto:contact@scentmirage.com?subject=" + encodeURIComponent(title);
+      document.getElementById("ui-modal-body").innerHTML = contentHtml;
+      document.getElementById("ui-modal-actions").innerHTML = actionsHtml;
       document.getElementById("ui-modal-box").style.display = "flex";
     }
 
-    // 全域事件委託：只要點擊匹配 data-action，無條件即時觸發
+    // 全域事件代理
     document.addEventListener("click", function(e) {
       var target = e.target.closest("[data-action]");
       if (!target) return;
@@ -467,9 +470,35 @@
           btn.innerHTML = "<span>複製此靈感卡</span>";
         }, 2000);
       } else if (act === "open-oil-modal") {
-        popModal("5ml 客製香氣滾珠油 (HK$98)", "本產品為按單調配，確認原料包材現貨後於 3-5 個工作天內調製完成寄出。目前第一批樣品測試中，歡迎聯繫我們登記候補名額。");
+        var oilMsg = encodeURIComponent("你好，我想查詢並登記預約 5ml 客製香氣滾珠油（HK$98）：");
+        openModalWithActions(
+          "5ml 客製香氣滾珠油 (HK$98)",
+          "<p>本產品為按單調配，確認原料現貨後於 3-5 個工作天內完成調製並寄出。</p><p class='text-[11px] text-subtle'>* 運費另計（支援順豐速運 / 易寄取）。</p>",
+          "<a href='https://wa.me/85261314101?text=" + oilMsg + "' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-[#25D366] text-white text-xs tracking-wider rounded-xl hover:opacity-90 transition font-medium shadow-sm flex items-center justify-center gap-2'>" +
+            "<span>WhatsApp 登記查詢</span>" +
+          "</a>" +
+          "<a href='https://ig.me/m/SCENTMIRAGE.LAB' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-paper border border-line text-ink text-xs tracking-wider rounded-xl hover:border-ink transition font-medium'>" +
+            "Instagram 私訊 (@SCENTMIRAGE.LAB)" +
+          "</a>"
+        );
       } else if (act === "open-ws-modal") {
-        popModal("心靈鏡像工作坊 (90分鐘 / HK$380)", "以香氣與個人聯想為素材的創作型感官手作體驗，非醫療或心理諮商服務。如欲預約場次與確認人數名額，請點擊聯繫。");
+        var wsMsg = encodeURIComponent("你好，我想預約 10月27日 灣仔「心靈鏡像」調香工作坊席位（姓名： 人數：）：");
+        openModalWithActions(
+          "「心靈鏡像」調香工作坊 (HK$380)",
+          "<div class='space-y-2'>" +
+            "<p><strong>近期確認場次：</strong> 2026 年 10 月 27 日（週二）19:00 - 20:30</p>" +
+            "<p><strong>地點：</strong> 香港灣仔區獨立工作室（近灣仔地鐵站）</p>" +
+            "<p><strong>費用：</strong> HK$380 / 位（含所有調香材料與專屬作品）</p>" +
+            "<p class='text-[11px] text-subtle border-t border-line/60 pt-2'>* 小班制名額有限，請選擇下方慣用方式發送預約訊息以鎖定席位。</p>" +
+            "<p class='text-[10px] text-subtle/80'>* 本體驗以香氣聯想與個人創作為主，非醫療或心理諮商服務。</p>" +
+          "</div>",
+          "<a href='https://wa.me/85261314101?text=" + wsMsg + "' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-[#25D366] text-white text-xs tracking-wider rounded-xl hover:opacity-90 transition font-medium shadow-sm flex items-center justify-center gap-2'>" +
+            "<span>WhatsApp 快速預約席位</span>" +
+          "</a>" +
+          "<a href='https://ig.me/m/SCENTMIRAGE.LAB' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-paper border border-line text-ink text-xs tracking-wider rounded-xl hover:border-ink transition font-medium'>" +
+            "Instagram 私訊預約 (@SCENTMIRAGE.LAB)" +
+          "</a>"
+        );
       } else if (act === "close-modal") {
         document.getElementById("ui-modal-box").style.display = "none";
       }
