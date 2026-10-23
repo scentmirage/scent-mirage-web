@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SCENT MIRAGE × AromaMood ｜ 獨立調香沙龍與日常感官探索</title>
+  
+  <!-- 標題與社交預覽 (已全面移除 AromaMood) -->
+  <title>SCENT MIRAGE ｜ 獨立調香沙龍與日常感官探索</title>
+  <meta name="description" content="SCENT MIRAGE 獨立調香沙龍。日常感官留白練習、1分鐘香氣探索、7日轉場手札與心靈鏡像調香工作坊。">
+  <meta property="og:title" content="SCENT MIRAGE ｜ 獨立調香沙龍與日常感官探索">
+  <meta property="og:description" content="日常感官留白練習。探索此刻偏好的香氣氛圍，預約獨立工作室調香體驗。">
+  <meta property="og:site_name" content="SCENT MIRAGE">
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -66,9 +72,29 @@
 </head>
 <body class="selection:bg-amberAccent/20 selection:text-ink antialiased">
   
-  <div class="min-h-screen flex flex-col justify-between max-w-xl mx-auto px-5 py-8 md:py-12">
+  <div class="min-h-screen flex flex-col justify-between max-w-xl mx-auto px-5 py-6 md:py-10">
     
-    <!-- 頂部 Header -->
+    <!-- 頂端極簡直達導覽列 (類似 Google 右上角快捷鍵設計) -->
+    <nav class="flex justify-between items-center text-xs border-b border-line/70 pb-3 mb-6">
+      <div class="font-cormorant text-xs tracking-[0.2em] uppercase text-subtle font-medium">
+        ATELIER MENU
+      </div>
+      <div class="flex items-center gap-4 text-xs font-light">
+        <a href="https://scentmirage.gumroad.com/l/7-day-sensory-journal" target="_blank" rel="noopener noreferrer" class="text-muted hover:text-ink transition hover:underline">
+          香氣手札
+        </a>
+        <span class="text-line">|</span>
+        <button data-action="quick-oil" type="button" class="text-muted hover:text-ink transition hover:underline cursor-pointer">
+          客製滾珠油
+        </button>
+        <span class="text-line">|</span>
+        <button data-action="quick-workshop" type="button" class="text-amberAccent hover:text-amberAccent/80 font-medium transition hover:underline cursor-pointer">
+          10/27 工作坊
+        </button>
+      </div>
+    </nav>
+
+    <!-- 品牌 Header -->
     <header class="text-center mb-8">
       <div class="inline-flex items-center gap-2 px-3 py-1 bg-sand/80 rounded-full border border-line/60 mb-2.5">
         <span class="w-1.5 h-1.5 rounded-full bg-amberAccent"></span>
@@ -101,12 +127,20 @@
         <p class="text-xs md:text-sm text-muted leading-relaxed font-light max-w-md mx-auto mb-8">
           氣味不是重整狀態的靈丹妙藥，而是一枚溫和的感官提示——就像在翻閱下一頁之前，輕輕放下一枚書籤。回答 4 個生活直覺問題，整理專屬於你的留白靈感卡。
         </p>
-        <button data-action="start-quiz" type="button" class="w-full py-4 bg-ink text-paper text-xs tracking-[0.25em] font-medium rounded-2xl hover:bg-ink/90 active:scale-[0.99] transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
-          <span>開始香氣探索</span>
-          <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </button>
+        
+        <div class="space-y-3">
+          <button data-action="start-quiz" type="button" class="w-full py-4 bg-ink text-paper text-xs tracking-[0.25em] font-medium rounded-2xl hover:bg-ink/90 active:scale-[0.99] transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
+            <span>開始香氣探索</span>
+            <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+          
+          <button data-action="skip-to-catalog" type="button" class="text-xs text-subtle hover:text-ink font-light underline transition py-2 block mx-auto cursor-pointer">
+            跳過測驗，直接瀏覽全品項與工作坊預約 ➔
+          </button>
+        </div>
+
         <p class="text-[11px] text-subtle mt-5 leading-normal font-light">
           * 僅供個人感官生活記錄，不作醫療或心理診斷，亦不保證任何生理效果。
         </p>
@@ -148,10 +182,10 @@
         </button>
       </section>
 
-      <!-- Step 5: 結果頁 -->
+      <!-- Step 5: 結果頁與品項列表 -->
       <section id="pane-result" style="display: none;" class="space-y-8">
-        <!-- 靈感卡 -->
-        <div class="bg-paperCard rounded-3xl p-7 md:p-9 shadow-float border border-line relative overflow-hidden">
+        <!-- 靈感卡 (若是直接跳過測驗進來則會呈現日常通用卡) -->
+        <div id="box-inspiration-card" class="bg-paperCard rounded-3xl p-7 md:p-9 shadow-float border border-line relative overflow-hidden">
           <div class="flex justify-between items-start border-b border-line pb-4 mb-6">
             <div>
               <span class="font-cormorant text-xs tracking-[0.3em] uppercase text-amberAccent font-semibold block">
@@ -206,7 +240,7 @@
         </div>
 
         <!-- 3 大唯一核准商品入口 -->
-        <div class="space-y-4 pt-2">
+        <div id="catalog-section" class="space-y-4 pt-2">
           <div class="flex items-center gap-2 px-1">
             <span class="w-1 h-3.5 bg-amberAccent rounded-full"></span>
             <h4 class="font-serif text-sm font-medium tracking-wider text-ink">
@@ -241,7 +275,7 @@
                 </span>
               </div>
               <h5 class="font-serif text-base font-medium text-ink mt-2">5ml 靈感卡客製香氣滾珠油</h5>
-              <p class="text-xs text-subtle mt-1 font-light">以剛才測出的香調為基底 ｜ 附專屬名字標籤</p>
+              <p class="text-xs text-subtle mt-1 font-light">以偏好香調為基底 ｜ 附專屬名字標籤</p>
               <div class="text-sm font-semibold text-amberAccent mt-2">HK$98</div>
             </div>
             <button data-action="open-oil-modal" type="button" class="px-6 py-3 border border-line text-ink text-xs tracking-wider rounded-xl hover:bg-paper hover:border-ink transition font-medium cursor-pointer">
@@ -249,7 +283,7 @@
             </button>
           </div>
 
-          <!-- 商品 3: 工作坊 -->
+          <!-- 商品 3: 工作坊 (更新為 19:30 - 21:00) -->
           <div class="bg-paperCard p-6 rounded-3xl border border-line shadow-salon flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div class="flex items-center gap-2">
@@ -261,7 +295,7 @@
                 </span>
               </div>
               <h5 class="font-serif text-base font-medium text-ink mt-2">「心靈鏡像」調香工作坊</h5>
-              <p class="text-xs text-subtle mt-1 font-light">90 分鐘獨立沙龍手作 ｜ 10月27日 19:00 灣仔區</p>
+              <p class="text-xs text-subtle mt-1 font-light">90 分鐘獨立沙龍手作 ｜ 10月27日 19:30-21:00 灣仔區</p>
               <div class="text-sm font-semibold text-amberAccent mt-2">HK$380</div>
             </div>
             <button data-action="open-ws-modal" type="button" class="px-6 py-3 bg-ink text-paper border border-ink text-xs tracking-wider rounded-xl hover:bg-ink/90 transition font-medium cursor-pointer shadow-sm">
@@ -280,7 +314,7 @@
         本內容只供個人感官探索與生活記錄，不提供醫療診斷、心理治療或個人化健康建議，亦不保證任何生理或情緒效果。完成測驗或手札不需要使用精油。若使用香氛產品，請遵照產品標示並保持空氣流通；勿口服精油，亦勿將未稀釋精油塗抹於皮膚。
       </p>
       <p class="text-[10px] text-subtle/70 font-mono tracking-wider">
-        © 2026 SCENT MIRAGE APOTHECARY. All Rights Reserved.
+        © 2026 SCENT MIRAGE. All Rights Reserved.
       </p>
     </footer>
 
@@ -450,6 +484,13 @@
 
       if (act === "start-quiz") {
         setStep(1);
+      } else if (act === "skip-to-catalog") {
+        setStep(5);
+        // 若直接跳過測驗，平滑滾動至商品清單區
+        setTimeout(function() {
+          var el = document.getElementById("catalog-section");
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
       } else if (act === "prev-quiz") {
         setStep(state.step > 1 ? state.step - 1 : 0);
       } else if (act === "next-quiz") {
@@ -474,23 +515,27 @@
         setTimeout(function() {
           btn.innerHTML = "<span>複製此靈感卡</span>";
         }, 2000);
-      } else if (act === "open-oil-modal") {
+      } else if (act === "open-oil-modal" || act === "quick-oil") {
         var a0 = state.answers[0] || {};
         var a1 = state.answers[1] || {};
         var a2 = state.answers[2] || {};
         var a3 = state.answers[3] || {};
 
-        var resultSummary = (a3.time || "日常轉場") + "・" + (a2.tone || "沉靜") + "・" + (a1.family ? a1.family.split(" ")[0] : "木質調");
+        var hasQuiz = state.answers[0] && state.answers[1];
+        var resultSummary = hasQuiz 
+          ? ((a3.time || "日常轉場") + "・" + (a2.tone || "沉靜") + "・" + (a1.family ? a1.family.split(" ")[0] : "木質調"))
+          : "日常轉場・客製香調";
 
         var customMsg = encodeURIComponent(
-          "你好，我想預約 5ml 客製香氣滾珠油（HK$98）。\n我剛完成線上探索，測驗結果為：【" + resultSummary + "】。\n想以此為基底進行調製，請問如何安排？"
+          "你好，我想預約 5ml 客製香氣滾珠油（HK$98）。\n" +
+          (hasQuiz ? ("測驗結果為：【" + resultSummary + "】\n想以此為基底進行調製，請問如何安排？") : "想直接了解客製香調與調配安排，謝謝！")
         );
 
         openModalWithActions(
           "5ml 靈感卡客製香氣滾珠油 (HK$98)",
           "<div class='space-y-2'>" +
             "<div class='bg-sand/60 p-3 rounded-xl border border-line/70 text-ink'>" +
-              "<div class='text-[10px] text-subtle font-light'>已為你鎖定測驗偏好基底：</div>" +
+              "<div class='text-[10px] text-subtle font-light'>" + (hasQuiz ? "已為你鎖定測驗偏好基底：" : "客製香調基底：") + "</div>" +
               "<div class='font-medium text-xs mt-0.5 text-amberAccent'>【" + resultSummary + "】</div>" +
             "</div>" +
             "<p class='text-[11px] text-muted leading-relaxed font-light'>" +
@@ -498,18 +543,18 @@
             "</p>" +
           "</div>",
           "<a href='https://wa.me/85261314101?text=" + customMsg + "' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-[#25D366] text-white text-xs tracking-wider rounded-xl hover:opacity-90 transition font-medium shadow-sm flex items-center justify-center gap-2'>" +
-            "<span>以測驗結果 WhatsApp 預約</span>" +
+            "<span>" + (hasQuiz ? "以測驗結果 WhatsApp 預約" : "WhatsApp 快速預約") + "</span>" +
           "</a>" +
           "<a href='https://ig.me/m/SCENTMIRAGE.LAB' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-paper border border-line text-ink text-xs tracking-wider rounded-xl hover:border-ink transition font-medium'>" +
             "Instagram 私訊預約 (@SCENTMIRAGE.LAB)" +
           "</a>"
         );
-      } else if (act === "open-ws-modal") {
-        var wsMsg = encodeURIComponent("你好，我想預約 10月27日 灣仔「心靈鏡像」調香工作坊席位（姓名： 人數：）：");
+      } else if (act === "open-ws-modal" || act === "quick-workshop") {
+        var wsMsg = encodeURIComponent("你好，我想預約 10月27日 19:30 灣仔「心靈鏡像」調香工作坊席位（姓名： 人數：）：");
         openModalWithActions(
           "「心靈鏡像」調香工作坊 (HK$380)",
           "<div class='space-y-2'>" +
-            "<p><strong>近期確認場次：</strong> 2026 年 10 月 27 日（週二）19:00 - 20:30</p>" +
+            "<p><strong>近期確認場次：</strong> 2026 年 10 月 27 日（週二）19:30 - 21:00</p>" +
             "<p><strong>地點：</strong> 香港灣仔區獨立工作室（近灣仔地鐵站）</p>" +
             "<p><strong>費用：</strong> HK$380 / 位（含所有調香材料與專屬作品）</p>" +
             "<p class='text-[11px] text-subtle border-t border-line/60 pt-2'>* 小班制名額有限，請選擇下方慣用方式發送預約訊息以鎖定席位。</p>" +
