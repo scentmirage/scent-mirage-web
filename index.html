@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>靈魂處方箋 ｜ SCENT MIRAGE</title>
+  
+  <!-- 標題與社交預覽 (已全面移除 AromaMood) -->
+  <title>SCENT MIRAGE ｜ 獨立調香沙龍與日常感官探索</title>
+  <meta name="description" content="SCENT MIRAGE 獨立調香沙龍。日常感官留白練習、1分鐘香氣探索、7日轉場手札與心靈鏡像調香工作坊。">
+  <meta property="og:title" content="SCENT MIRAGE ｜ 獨立調香沙龍與日常感官探索">
+  <meta property="og:description" content="日常感官留白練習。探索此刻偏好的香氣氛圍，預約獨立工作室調香體驗。">
+  <meta property="og:site_name" content="SCENT MIRAGE">
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -52,304 +58,519 @@
         radial-gradient(at 0% 100%, rgba(235, 227, 213, 0.6) 0px, transparent 50%);
       background-attachment: fixed;
     }
-
-    /* 3D 翻牌基礎設定 */
-    .perspective-container {
-      perspective: 1200px;
+    .quiz-opt.is-active {
+      border-color: #9E6D38 !important;
+      background-color: #F5EFEB !important;
+      box-shadow: 0 0 0 1px #9E6D38 inset;
     }
-
-    .card-flipper {
-      transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-      transform-style: preserve-3d;
-    }
-
-    .card-flipper.is-flipped {
-      transform: rotateY(180deg);
-    }
-
-    .card-front, .card-back {
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-    }
-
-    .card-front {
-      transform: rotateY(180deg);
-    }
-
-    /* 淡出隱藏未選中的牌 */
-    .fade-out-unselected {
-      opacity: 0;
-      transform: scale(0.92);
-      pointer-events: none;
-      transition: all 0.5s ease-out;
+    .quiz-opt.is-active .dot-check {
+      border-color: #9E6D38;
+      background-color: #9E6D38;
+      color: #FFFFFF;
     }
   </style>
 </head>
 <body class="selection:bg-amberAccent/20 selection:text-ink antialiased">
   
-  <div class="min-h-screen flex flex-col justify-between max-w-xl mx-auto px-5 py-8 md:py-12">
+  <div class="min-h-screen flex flex-col justify-between max-w-xl mx-auto px-5 py-6 md:py-10">
     
-    <!-- 頂部 Header -->
-    <header class="text-center mb-6">
+    <!-- 頂端極簡直達導覽列 (類似 Google 右上角快捷鍵設計) -->
+    <nav class="flex justify-between items-center text-xs border-b border-line/70 pb-3 mb-6">
+      <div class="font-cormorant text-xs tracking-[0.2em] uppercase text-subtle font-medium">
+        ATELIER MENU
+      </div>
+      <div class="flex items-center gap-4 text-xs font-light">
+        <a href="https://scentmirage.gumroad.com/l/7-day-sensory-journal" target="_blank" rel="noopener noreferrer" class="text-muted hover:text-ink transition hover:underline">
+          香氣手札
+        </a>
+        <span class="text-line">|</span>
+        <button data-action="quick-oil" type="button" class="text-muted hover:text-ink transition hover:underline cursor-pointer">
+          客製滾珠油
+        </button>
+        <span class="text-line">|</span>
+        <button data-action="quick-workshop" type="button" class="text-amberAccent hover:text-amberAccent/80 font-medium transition hover:underline cursor-pointer">
+          10/27 工作坊
+        </button>
+      </div>
+    </nav>
+
+    <!-- 品牌 Header -->
+    <header class="text-center mb-8">
       <div class="inline-flex items-center gap-2 px-3 py-1 bg-sand/80 rounded-full border border-line/60 mb-2.5">
         <span class="w-1.5 h-1.5 rounded-full bg-amberAccent"></span>
-        <span class="text-[10px] tracking-[0.25em] uppercase text-muted font-medium">Soul Prescription</span>
+        <span class="text-[10px] tracking-[0.25em] uppercase text-muted font-medium">Apothecary Atelier</span>
       </div>
       <h1 class="font-cormorant text-3xl md:text-4xl tracking-[0.2em] font-medium uppercase text-ink">
         SCENT MIRAGE
       </h1>
       <p class="font-serif text-xs tracking-widest text-subtle mt-1 font-light">
-        靈魂處方箋 ｜ 日常感官直覺指引
+        獨立調香沙龍 ｜ 日常感官留白練習
       </p>
     </header>
 
-    <!-- 主互動區域 -->
+    <!-- 主工作區 -->
     <main class="flex-1 flex flex-col justify-center">
 
-      <!-- 狀態提示語 -->
-      <div id="ui-instruction" class="text-center mb-8 transition-opacity duration-500">
-        <h2 class="font-serif text-lg md:text-xl text-ink font-normal leading-snug">
-          深呼吸三次。
+      <!-- Step 0: 首頁引導 -->
+      <section id="pane-0" class="bg-paperCard rounded-3xl p-8 md:p-10 shadow-salon border border-line text-center relative overflow-hidden">
+        <div class="w-12 h-12 bg-amberLight rounded-2xl flex items-center justify-center mx-auto mb-6 text-amberAccent border border-line/60">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <span class="text-[11px] font-medium tracking-[0.2em] uppercase text-amberAccent block mb-2">
+          1-Minute Exploration
+        </span>
+        <h2 class="font-serif text-2xl md:text-3xl text-ink font-normal leading-snug mb-3">
+          用 1 分鐘探索<br />此刻偏好的香氣氛圍
         </h2>
-        <p class="text-xs md:text-sm text-subtle font-light mt-1.5 tracking-wide">
-          憑直覺，點擊最吸引你的那張牌。
+        <p class="text-xs md:text-sm text-muted leading-relaxed font-light max-w-md mx-auto mb-8">
+          氣味不是重整狀態的靈丹妙藥，而是一枚溫和的感官提示——就像在翻閱下一頁之前，輕輕放下一枚書籤。回答 4 個生活直覺問題，整理專屬於你的留白靈感卡。
         </p>
-      </div>
-
-      <!-- 卡牌容器 (5張牌排版，支援 RWD 平板與手機滑動/均分) -->
-      <div id="cards-grid" class="flex justify-center items-center gap-2.5 sm:gap-4 overflow-x-auto py-4 px-1 no-scrollbar transition-all duration-700">
-        <!-- 卡牌將由 JavaScript 洗牌後動態渲染 -->
-      </div>
-
-      <!-- 揭曉處方詳情 (預設隱藏，點牌後優雅淡入) -->
-      <section id="result-panel" class="hidden opacity-0 transition-all duration-700 mt-6 bg-paperCard rounded-3xl p-6 md:p-8 shadow-float border border-line">
         
-        <div class="border-b border-line pb-4 mb-5 text-center">
-          <span class="font-cormorant text-xs tracking-[0.3em] uppercase text-amberAccent font-semibold block mb-1">
-            Your Scent Prescription
-          </span>
-          <h3 id="res-name" class="font-serif text-xl md:text-2xl text-ink font-normal"></h3>
-        </div>
-
-        <div class="space-y-4 mb-6 text-xs leading-relaxed">
-          <!-- 香調資訊 -->
-          <div class="bg-sand/40 border border-line/80 rounded-2xl p-4">
-            <span class="text-subtle block text-[11px] font-light mb-1">專屬配方香調</span>
-            <strong id="res-scent" class="text-ink font-medium text-sm"></strong>
-          </div>
-
-          <!-- 適合狀態 -->
-          <div class="bg-paper p-4 rounded-2xl border border-line/60">
-            <span class="text-subtle block text-[11px] font-light mb-1">感官處方註解</span>
-            <p id="res-desc" class="text-muted font-light text-xs"></p>
-          </div>
-
-          <!-- 靈魂金句 -->
-          <blockquote class="border-l-2 border-amberAccent pl-4 py-1 my-3 italic text-ink/90 font-serif text-sm">
-            <span id="res-quote"></span>
-          </blockquote>
-        </div>
-
-        <!-- 外部結帳 CTA -->
         <div class="space-y-3">
-          <a id="res-checkout-btn" href="#" target="_blank" rel="noopener noreferrer" class="w-full py-4 bg-ink text-paper text-xs tracking-[0.25em] font-medium rounded-2xl hover:bg-ink/90 active:scale-[0.99] transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
-            <span>訂製我的專屬處方 (HKD $220)</span>
+          <button data-action="start-quiz" type="button" class="w-full py-4 bg-ink text-paper text-xs tracking-[0.25em] font-medium rounded-2xl hover:bg-ink/90 active:scale-[0.99] transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
+            <span>開始香氣探索</span>
             <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
-          </a>
-
-          <button id="res-retry-btn" type="button" class="w-full py-2.5 text-xs text-subtle hover:text-ink font-light underline transition cursor-pointer text-center">
-            重新靜心抽牌
+          </button>
+          
+          <button data-action="skip-to-catalog" type="button" class="text-xs text-subtle hover:text-ink font-light underline transition py-2 block mx-auto cursor-pointer">
+            跳過測驗，直接瀏覽全品項與工作坊預約 ➔
           </button>
         </div>
 
-        <p class="text-[10px] text-subtle text-center mt-4 font-light">
-          * 結帳後將由獨立調香沙龍按處方現調封裝，3-5 個工作天內寄出。
+        <p class="text-[11px] text-subtle mt-5 leading-normal font-light">
+          * 僅供個人感官生活記錄，不作醫療或心理診斷，亦不保證任何生理效果。
         </p>
+      </section>
+
+      <!-- Step 1~4: 測驗區 -->
+      <section id="pane-quiz" style="display: none;" class="bg-paperCard rounded-3xl p-7 md:p-9 shadow-salon border border-line relative">
+        <div class="mb-6">
+          <div class="flex justify-between items-center text-xs text-subtle mb-2.5">
+            <span id="ui-step-label" class="font-medium tracking-wider text-amberAccent">生活節奏自述</span>
+            <div class="flex items-center gap-3">
+              <span id="ui-progress-num" class="font-mono text-[11px]">01 / 04</span>
+              <button data-action="prev-quiz" type="button" class="text-[11px] text-muted hover:text-ink underline transition font-light cursor-pointer">
+                返回
+              </button>
+            </div>
+          </div>
+          <div class="w-full bg-sand h-1.5 rounded-full overflow-hidden">
+            <div id="ui-progress-bar" class="bg-amberAccent h-full transition-all duration-300 ease-out rounded-full" style="width: 25%"></div>
+          </div>
+        </div>
+        
+        <h3 id="ui-quiz-title" class="font-serif text-xl md:text-2xl text-ink font-normal mb-1.5 leading-snug"></h3>
+        <p id="ui-quiz-desc" class="text-xs text-subtle font-light mb-6"></p>
+
+        <!-- 選項列表 -->
+        <div id="ui-options-list" class="space-y-3 mb-8"></div>
+
+        <button 
+          id="ui-next-btn"
+          data-action="next-quiz"
+          type="button"
+          disabled
+          class="w-full py-4 text-xs tracking-[0.25em] font-medium rounded-2xl transition duration-200 flex items-center justify-center gap-2 bg-line/70 text-subtle/50 cursor-not-allowed">
+          <span id="ui-next-label">下一題</span>
+          <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </button>
+      </section>
+
+      <!-- Step 5: 結果頁與品項列表 -->
+      <section id="pane-result" style="display: none;" class="space-y-8">
+        <!-- 靈感卡 (若是直接跳過測驗進來則會呈現日常通用卡) -->
+        <div id="box-inspiration-card" class="bg-paperCard rounded-3xl p-7 md:p-9 shadow-float border border-line relative overflow-hidden">
+          <div class="flex justify-between items-start border-b border-line pb-4 mb-6">
+            <div>
+              <span class="font-cormorant text-xs tracking-[0.3em] uppercase text-amberAccent font-semibold block">
+                Scent Inspiration Card
+              </span>
+              <h3 id="ui-res-title" class="font-serif text-2xl md:text-3xl text-ink font-normal mt-1">
+                日常・木質靈感
+              </h3>
+            </div>
+            <span id="ui-res-tag" class="px-3 py-1 bg-sand text-amberAccent text-[11px] font-medium rounded-full border border-line/60">
+              待辦較多
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-xs mb-6">
+            <div class="bg-paper p-4 rounded-2xl border border-line/60">
+              <span class="text-subtle block text-[11px] mb-1 font-light">偏好香調場景</span>
+              <strong id="ui-res-family" class="text-ink font-medium text-sm">木質調 Woody</strong>
+            </div>
+            <div class="bg-paper p-4 rounded-2xl border border-line/60">
+              <span class="text-subtle block text-[11px] mb-1 font-light">觸感肌理偏好</span>
+              <strong id="ui-res-tone" class="text-ink font-medium text-sm">通透開闊</strong>
+            </div>
+          </div>
+
+          <div class="bg-sand/40 border border-line/80 rounded-2xl p-4 text-xs space-y-2 mb-6">
+            <div class="flex items-center text-muted">
+              <span class="w-14 text-subtle shrink-0 font-light">前調印象</span>
+              <span id="ui-res-top" class="text-ink font-medium">苦橙葉</span>
+            </div>
+            <div class="flex items-center text-muted">
+              <span class="w-14 text-subtle shrink-0 font-light">中調場景</span>
+              <span id="ui-res-mid" class="text-ink font-medium">雪松與乾燥紙張</span>
+            </div>
+            <div class="flex items-center text-muted">
+              <span class="w-14 text-subtle shrink-0 font-light">尾調質地</span>
+              <span id="ui-res-base" class="text-ink font-medium">檀香木</span>
+            </div>
+            <p class="text-[10px] text-subtle pt-2 border-t border-line/60 font-light">
+              * 上述香調為感官意象聯想，非直接皮膚塗抹處方。
+            </p>
+          </div>
+
+          <div class="flex gap-3">
+            <button id="ui-copy-btn" data-action="copy-card" type="button" class="flex-1 py-3 text-xs tracking-wider bg-paper border border-line text-ink rounded-xl hover:border-amberAccent transition font-medium flex items-center justify-center gap-2 cursor-pointer">
+              <span>複製此靈感卡</span>
+            </button>
+            <button data-action="restart-quiz" type="button" class="px-5 py-3 text-xs text-subtle hover:text-ink transition font-light underline cursor-pointer">
+              重新探索
+            </button>
+          </div>
+        </div>
+
+        <!-- 3 大唯一核准商品入口 -->
+        <div id="catalog-section" class="space-y-4 pt-2">
+          <div class="flex items-center gap-2 px-1">
+            <span class="w-1 h-3.5 bg-amberAccent rounded-full"></span>
+            <h4 class="font-serif text-sm font-medium tracking-wider text-ink">
+              將感官練習延續至日常生活
+            </h4>
+          </div>
+
+          <!-- 商品 1: 手札 -->
+          <div class="bg-paperCard p-6 rounded-3xl border border-line shadow-salon flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] tracking-wider uppercase bg-sand px-2.5 py-0.5 rounded-full text-amberAccent font-medium border border-line/60">
+                即時數位下載
+              </span>
+              <h5 class="font-serif text-base font-medium text-ink mt-2">《7 日香氣轉場手札》數位版</h5>
+              <p class="text-xs text-subtle mt-1 font-light">含 12 頁手札 PDF + 真正 A6 尺寸隨身卡</p>
+              <div class="text-sm font-semibold text-amberAccent mt-2">HK$78</div>
+            </div>
+            <a href="https://scentmirage.gumroad.com/l/7-day-sensory-journal" target="_blank" rel="noopener noreferrer" class="text-center px-6 py-3 bg-ink text-paper text-xs tracking-widest font-medium rounded-xl hover:bg-ink/90 active:scale-[0.99] transition shadow-md">
+              立即購買
+            </a>
+          </div>
+
+          <!-- 商品 2: 滾珠油 -->
+          <div class="bg-paperCard p-6 rounded-3xl border border-line shadow-salon flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] tracking-wider uppercase bg-sand px-2.5 py-0.5 rounded-full text-subtle font-medium border border-line/60">
+                  接單現調 3-5 天
+                </span>
+                <span class="text-[10px] tracking-wider bg-amberLight text-amberAccent px-2 py-0.5 rounded-full font-medium border border-amberAccent/30">
+                  按靈感卡基底調製
+                </span>
+              </div>
+              <h5 class="font-serif text-base font-medium text-ink mt-2">5ml 靈感卡客製香氣滾珠油</h5>
+              <p class="text-xs text-subtle mt-1 font-light">以偏好香調為基底 ｜ 附專屬名字標籤</p>
+              <div class="text-sm font-semibold text-amberAccent mt-2">HK$98</div>
+            </div>
+            <button data-action="open-oil-modal" type="button" class="px-6 py-3 border border-line text-ink text-xs tracking-wider rounded-xl hover:bg-paper hover:border-ink transition font-medium cursor-pointer">
+              預約客製
+            </button>
+          </div>
+
+          <!-- 商品 3: 工作坊 (更新為 19:30 - 21:00) -->
+          <div class="bg-paperCard p-6 rounded-3xl border border-line shadow-salon flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] tracking-wider uppercase bg-sand px-2.5 py-0.5 rounded-full text-subtle font-medium border border-line/60">
+                  實體創作體驗
+                </span>
+                <span class="text-[10px] tracking-wider bg-amberLight text-amberAccent px-2 py-0.5 rounded-full font-medium border border-amberAccent/30">
+                  近期場次：10/27 灣仔
+                </span>
+              </div>
+              <h5 class="font-serif text-base font-medium text-ink mt-2">「心靈鏡像」調香工作坊</h5>
+              <p class="text-xs text-subtle mt-1 font-light">90 分鐘獨立沙龍手作 ｜ 10月27日 19:30-21:00 灣仔區</p>
+              <div class="text-sm font-semibold text-amberAccent mt-2">HK$380</div>
+            </div>
+            <button data-action="open-ws-modal" type="button" class="px-6 py-3 bg-ink text-paper border border-ink text-xs tracking-wider rounded-xl hover:bg-ink/90 transition font-medium cursor-pointer shadow-sm">
+              預約席位
+            </button>
+          </div>
+        </div>
       </section>
 
     </main>
 
-    <!-- 底部版權 -->
-    <footer class="mt-12 pt-6 border-t border-line text-center text-[10px] text-subtle/70 font-mono tracking-wider">
-      © 2026 SCENT MIRAGE APOTHECARY. All Rights Reserved.
+    <!-- 底部版權與合規聲明 -->
+    <footer class="mt-14 pt-8 border-t border-line text-center text-[11px] text-subtle leading-relaxed space-y-4 font-light">
+      <p class="max-w-md mx-auto">
+        <strong class="font-medium text-ink">安全須知 Safety Notice：</strong><br />
+        本內容只供個人感官探索與生活記錄，不提供醫療診斷、心理治療或個人化健康建議，亦不保證任何生理或情緒效果。完成測驗或手札不需要使用精油。若使用香氛產品，請遵照產品標示並保持空氣流通；勿口服精油，亦勿將未稀釋精油塗抹於皮膚。
+      </p>
+      <p class="text-[10px] text-subtle/70 font-mono tracking-wider">
+        © 2026 SCENT MIRAGE. All Rights Reserved.
+      </p>
     </footer>
 
   </div>
 
+  <!-- Modal 彈窗 -->
+  <div id="ui-modal-box" style="display: none;" class="fixed inset-0 bg-ink/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-paperCard rounded-3xl p-7 max-w-sm w-full shadow-float border border-line">
+      <h4 id="ui-modal-title" class="font-serif text-lg font-medium text-ink mb-2"></h4>
+      <div id="ui-modal-body" class="text-xs text-muted leading-relaxed mb-6 font-light space-y-2"></div>
+      
+      <!-- 雙按鈕群組 -->
+      <div id="ui-modal-actions" class="space-y-2"></div>
+
+      <button data-action="close-modal" type="button" class="w-full mt-3 py-2.5 border border-line text-xs text-subtle rounded-xl hover:bg-paper transition cursor-pointer font-light">
+        關閉
+      </button>
+    </div>
+  </div>
+
   <script>
-    // 預設資料陣列
-    const CARD_DATA = [
+    var QUIZ_DATA = [
       {
-        "id": 1,
-        "name": "隱士 (The Hermit)｜隱形結界",
-        "scent": "木質泥土調 (佛手柑 / 秘魯聖木 / 岩蘭草)",
-        "description": "適合社交疲勞、渴望獨處、覺得被外界情緒越界時的你。",
-        "quote": "「世界太吵的時候，允許自己暫時躲進這片安靜的森林。」",
-        "stripeUrl": "YOUR_STRIPE_LINK_1",
-        "image": "/images/card-hermit.jpg"
+        stepLabel: "生活節奏自述",
+        title: "回想今天一整天的狀態，你此刻最真實的節奏是？",
+        desc: "不需評判好壞，只做誠實的生活觀察",
+        options: [
+          { label: "待辦繁多，思緒難以停歇", tag: "待辦較多", hint: "需要一個溫和的切換開關" },
+          { label: "剛結束密集社交，想沉澱安靜", tag: "社交沉澱", hint: "渴望感官安靜與物理留白" },
+          { label: "正在多重角色與任務間頻繁轉換", tag: "角色切換", hint: "為不同狀態建立清晰邊界" },
+          { label: "節奏平緩，只想為日常留一點純粹空白", tag: "日常留白", hint: "沉浸於當下純粹呼吸" }
+        ]
       },
       {
-        "id": 2,
-        "name": "節制 (Temperance)｜大腦熄機",
-        "scent": "草本樹脂調 (羅馬洋甘菊 / 真正薰衣草 / 乳香)",
-        "description": "適合思緒混亂、焦慮失眠、下班後依然無法停止精神內耗的你。",
-        "quote": "「今天辛苦了，現在你可以安全地放下所有防備。」",
-        "stripeUrl": "YOUR_STRIPE_LINK_2",
-        "image": "/images/card-temperance.jpg"
+        stepLabel: "香氣畫面聯想",
+        title: "如果有一種氣味能代表你此刻渴望的空間感：",
+        desc: "挑選最能讓你聯想到安定的場景質地",
+        options: [
+          { label: "乾燥的老木工作台與翻開的紙張墨香", family: "木質調 Woody", top: "苦橙葉", mid: "雪松與乾燥紙張", base: "檀香木" },
+          { label: "清晨帶露水的草葉茶與舒展的微風", family: "草本調 Herbal", top: "尤加利", mid: "迷迭香茶香", base: "快樂鼠尾草" },
+          { label: "灑滿溫暖陽光的窗台與清脆果皮", family: "柑橘調 Citrus", top: "佛手柑皮", mid: "甜橙果肉", base: "溫暖安息香" },
+          { label: "微風吹過開闊田野的乾燥草香與泥土", family: "大地調 Earthy", top: "粉紅胡椒", mid: "岩蘭草", base: "廣藿香" }
+        ]
       },
       {
-        "id": 3,
-        "name": "皇后 (The Empress)｜溫柔擁抱",
-        "scent": "溫暖花木調 (甜橙 / 天竺葵 / 花梨木)",
-        "description": "適合感到自我價值低落、孤獨、剛經歷挫折需要被溫柔接住的你。",
-        "quote": "「不用急著堅強，你可以先好好接納自己的脆弱。」",
-        "stripeUrl": "YOUR_STRIPE_LINK_3",
-        "image": "/images/card-empress.jpg"
+        stepLabel: "氣味調性偏好",
+        title: "在香氣質地上，你直覺更受哪種觸感吸引？",
+        desc: "如同指尖撫摸布料般的肌理偏好",
+        options: [
+          { label: "沉穩、包覆感強的厚實溫暖", tone: "深層沉靜", tag: "沉實質樸" },
+          { label: "通透、帶有空氣流通感的明亮清新", tone: "通透開闊", tag: "輕盈舒展" },
+          { label: "微苦、不甜膩的植物原生氣息", tone: "自然原萃", tag: "草木微苦" },
+          { label: "溫和、像曬乾棉麻布料般的潔淨感", tone: "柔潤親膚", tag: "溫潤淨白" }
+        ]
       },
       {
-        "id": 4,
-        "name": "愚者 (The Fool)｜澄明之境",
-        "scent": "清新柑橘調 (葡萄柚 / 胡椒薄荷 / 絲柏)",
-        "description": "適合腦袋昏沉、陷入迷霧，需要瞬間喚醒感官與重新出發的你。",
-        "quote": "「深呼吸，將一切歸零，然後輕裝上陣。」",
-        "stripeUrl": "YOUR_STRIPE_LINK_4",
-        "image": "/images/card-fool.jpg"
-      },
-      {
-        "id": 5,
-        "name": "力量 (Strength)｜無畏底氣",
-        "scent": "沉穩辛木調 (黑胡椒 / 豆蔻 / 廣藿香)",
-        "description": "適合面對挑戰、重要會議前，需要強大氣場與自信心保護的你。",
-        "quote": "「你擁有的力量，比你想像中強大得多。」",
-        "stripeUrl": "YOUR_STRIPE_LINK_5",
-        "image": "/images/card-strength.jpg"
+        stepLabel: "日常轉場時段",
+        title: "你最想為一天中的哪一個時光，安放一個 3 分鐘小儀式？",
+        desc: "為生活標記一個具體、可落地的感官錨點",
+        options: [
+          { label: "晨間出門前，為新的一天設定安定的錨點", time: "晨間開啟", badge: "Morning Anchor" },
+          { label: "工作結束時，合上電腦標記任務的段落", time: "工作結尾", badge: "Closing Workday" },
+          { label: "傍晚歸家後，洗淨喧囂與切換生活角色", time: "傍晚轉場", badge: "Evening Transition" },
+          { label: "睡前熄燈前，讓大腦正式卸下所有重擔", time: "深夜留白", badge: "Night Rest" }
+        ]
       }
     ];
 
-    let currentShuffledCards = [];
-    let isSelected = false;
+    var state = {
+      step: 0,
+      answers: {}
+    };
 
-    // 洗牌演算法 (Fisher-Yates)
-    function shuffleArray(array) {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+    function setStep(newStep) {
+      state.step = newStep;
+      var p0 = document.getElementById("pane-0");
+      var pq = document.getElementById("pane-quiz");
+      var pr = document.getElementById("pane-result");
+
+      p0.style.display = (state.step === 0) ? "block" : "none";
+      pq.style.display = (state.step >= 1 && state.step <= 4) ? "block" : "none";
+      pr.style.display = (state.step === 5) ? "block" : "none";
+
+      if (state.step >= 1 && state.step <= 4) {
+        renderQuestion();
+      } else if (state.step === 5) {
+        renderResult();
       }
-      return arr;
-    }
-
-    // 初始化與渲染卡牌
-    function initCards() {
-      isSelected = false;
-      currentShuffledCards = shuffleArray(CARD_DATA);
-
-      const grid = document.getElementById("cards-grid");
-      const instruction = document.getElementById("ui-instruction");
-      const resultPanel = document.getElementById("result-panel");
-
-      // 重設狀態與排版
-      instruction.classList.remove("opacity-0");
-      resultPanel.classList.add("hidden");
-      resultPanel.classList.remove("opacity-100");
-      resultPanel.classList.add("opacity-0");
-
-      grid.innerHTML = "";
-      grid.className = "flex justify-center items-center gap-2 sm:gap-3.5 overflow-x-auto py-4 px-1 no-scrollbar transition-all duration-700";
-
-      currentShuffledCards.forEach((card, index) => {
-        const cardWrapper = document.createElement("div");
-        cardWrapper.className = "perspective-container shrink-0 w-16 sm:w-24 md:w-28 cursor-pointer select-none transition-all duration-500 ease-out hover:-translate-y-2";
-        cardWrapper.setAttribute("data-index", index);
-
-        // 卡片雙面結構 (預留圖片 placeholder)
-        cardWrapper.innerHTML = `
-          <div class="card-flipper relative w-full aspect-[2/3] rounded-2xl shadow-salon">
-            <!-- 卡背 (預設朝上) -->
-            <div class="card-back absolute inset-0 w-full h-full rounded-2xl border border-line bg-sand flex flex-col items-center justify-center p-2 text-center overflow-hidden">
-              <div class="w-full h-full border border-line/60 rounded-xl flex flex-col items-center justify-center bg-paperCard/50">
-                <span class="w-1.5 h-1.5 rounded-full bg-amberAccent mb-1"></span>
-                <span class="font-cormorant text-[9px] tracking-widest uppercase text-subtle">SCENT</span>
-              </div>
-            </div>
-
-            <!-- 卡面 (正面揭露) -->
-            <div class="card-front absolute inset-0 w-full h-full rounded-2xl border border-amberAccent/40 bg-paperCard flex flex-col items-center justify-between p-2 shadow-float overflow-hidden">
-              <div class="w-full flex-1 rounded-lg bg-sand/60 flex items-center justify-center text-[10px] text-subtle font-serif border border-line/40 overflow-hidden">
-                <img src="${card.image}" alt="${card.name}" onerror="this.parentElement.innerHTML='<span class=\\'font-serif text-[11px] text-ink p-1 text-center\\'>${card.name.split('｜')[0]}</span>'" class="w-full h-full object-cover">
-              </div>
-              <span class="text-[9px] font-serif text-ink tracking-tight mt-1 truncate w-full text-center">
-                ${card.name.split('｜')[0]}
-              </span>
-            </div>
-          </div>
-        `;
-
-        cardWrapper.addEventListener("click", () => handleCardClick(index));
-        grid.appendChild(cardWrapper);
-      });
-    }
-
-    // 處理卡牌點擊事件
-    function handleCardClick(selectedIndex) {
-      if (isSelected) return;
-      isSelected = true;
-
-      const selectedCardData = currentShuffledCards[selectedIndex];
-      const allCards = document.querySelectorAll("#cards-grid > div");
-      const instruction = document.getElementById("ui-instruction");
-      const resultPanel = document.getElementById("result-panel");
-      const grid = document.getElementById("cards-grid");
-
-      // 1. 隱藏提示文字
-      instruction.classList.add("opacity-0");
-
-      // 2. 翻開點選的卡牌，其餘淡出隱藏
-      allCards.forEach((cardEl, idx) => {
-        const flipper = cardEl.querySelector(".card-flipper");
-        if (idx === selectedIndex) {
-          flipper.classList.add("is-flipped");
-          // 將選中的牌放大為焦點卡片
-          cardEl.className = "perspective-container w-28 sm:w-36 md:w-44 select-none transition-all duration-700 mx-auto";
-        } else {
-          cardEl.classList.add("fade-out-unselected");
-          setTimeout(() => {
-            cardEl.style.display = "none";
-          }, 500);
-        }
-      });
-
-      // 3. 填入資料並淡入處方區塊
-      setTimeout(() => {
-        document.getElementById("res-name").innerText = selectedCardData.name;
-        document.getElementById("res-scent").innerText = selectedCardData.scent;
-        document.getElementById("res-desc").innerText = selectedCardData.description;
-        document.getElementById("res-quote").innerText = selectedCardData.quote;
-        
-        // 綁定 Stripe 結帳連結
-        const checkoutBtn = document.getElementById("res-checkout-btn");
-        checkoutBtn.href = selectedCardData.stripeUrl;
-
-        resultPanel.classList.remove("hidden");
-        // 強制重繪後觸發淡入
-        setTimeout(() => {
-          resultPanel.classList.remove("opacity-0");
-          resultPanel.classList.add("opacity-100");
-          resultPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 50);
-      }, 700);
-    }
-
-    // 綁定重抽按鈕
-    document.getElementById("res-retry-btn").addEventListener("click", () => {
-      initCards();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    }
 
-    // 頁面初次載入
-    window.addEventListener("DOMContentLoaded", initCards);
+    function renderQuestion() {
+      var q = QUIZ_DATA[state.step - 1];
+      document.getElementById("ui-step-label").innerText = q.stepLabel;
+      document.getElementById("ui-progress-num").innerText = "0" + state.step + " / 04";
+      document.getElementById("ui-progress-bar").style.width = (state.step / 4 * 100) + "%";
+      document.getElementById("ui-quiz-title").innerText = q.title;
+      document.getElementById("ui-quiz-desc").innerText = q.desc;
+      document.getElementById("ui-next-label").innerText = (state.step === 4) ? "查看專屬香氣靈感卡" : "下一題";
+
+      var container = document.getElementById("ui-options-list");
+      container.innerHTML = "";
+
+      var curSel = state.answers[state.step - 1];
+
+      for (var i = 0; i < q.options.length; i++) {
+        var opt = q.options[i];
+        var isSel = curSel && curSel.label === opt.label;
+
+        var d = document.createElement("div");
+        d.setAttribute("data-action", "pick-option");
+        d.setAttribute("data-index", i);
+        d.className = "quiz-opt p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 flex items-center justify-between border-line bg-paper/50 hover:bg-paper hover:border-muted/50 " + (isSel ? "is-active" : "");
+
+        var hintHtml = opt.hint ? '<div class="text-[11px] text-subtle mt-0.5 font-light pointer-events-none">' + opt.hint + '</div>' : '';
+        d.innerHTML = 
+          '<div class="pointer-events-none">' +
+            '<div class="text-xs md:text-sm leading-relaxed ' + (isSel ? 'text-ink font-medium' : 'text-ink/90') + '">' + opt.label + '</div>' +
+            hintHtml +
+          '</div>' +
+          '<div class="dot-check w-5 h-5 rounded-full flex items-center justify-center border text-xs ml-3 shrink-0 border-line bg-white pointer-events-none">' +
+            (isSel ? '✓' : '') +
+          '</div>';
+
+        container.appendChild(d);
+      }
+
+      var nextBtn = document.getElementById("ui-next-btn");
+      if (curSel) {
+        nextBtn.removeAttribute("disabled");
+        nextBtn.className = "w-full py-4 text-xs tracking-[0.25em] font-medium rounded-2xl transition duration-200 flex items-center justify-center gap-2 bg-ink text-paper hover:bg-ink/90 active:scale-[0.99] shadow-md cursor-pointer";
+      } else {
+        nextBtn.setAttribute("disabled", "true");
+        nextBtn.className = "w-full py-4 text-xs tracking-[0.25em] font-medium rounded-2xl transition duration-200 flex items-center justify-center gap-2 bg-line/70 text-subtle/50 cursor-not-allowed";
+      }
+    }
+
+    function renderResult() {
+      var a0 = state.answers[0] || {};
+      var a1 = state.answers[1] || {};
+      var a2 = state.answers[2] || {};
+      var a3 = state.answers[3] || {};
+
+      var fam = (a1.family || "木質調").split(" ")[0];
+      document.getElementById("ui-res-title").innerText = (a3.time || "日常") + "・" + fam + "靈感";
+      document.getElementById("ui-res-tag").innerText = a0.tag || "日常覺察";
+      document.getElementById("ui-res-family").innerText = a1.family || "木質調 Woody";
+      document.getElementById("ui-res-tone").innerText = a2.tone || "通透開闊";
+      document.getElementById("ui-res-top").innerText = a1.top || "苦橙葉";
+      document.getElementById("ui-res-mid").innerText = a1.mid || "雪松與乾燥紙張";
+      document.getElementById("ui-res-base").innerText = a1.base || "檀香木";
+    }
+
+    function openModalWithActions(title, contentHtml, actionsHtml) {
+      document.getElementById("ui-modal-title").innerText = title;
+      document.getElementById("ui-modal-body").innerHTML = contentHtml;
+      document.getElementById("ui-modal-actions").innerHTML = actionsHtml;
+      document.getElementById("ui-modal-box").style.display = "flex";
+    }
+
+    // 全域事件代理
+    document.addEventListener("click", function(e) {
+      var target = e.target.closest("[data-action]");
+      if (!target) return;
+
+      var act = target.getAttribute("data-action");
+
+      if (act === "start-quiz") {
+        setStep(1);
+      } else if (act === "skip-to-catalog") {
+        setStep(5);
+        // 若直接跳過測驗，平滑滾動至商品清單區
+        setTimeout(function() {
+          var el = document.getElementById("catalog-section");
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      } else if (act === "prev-quiz") {
+        setStep(state.step > 1 ? state.step - 1 : 0);
+      } else if (act === "next-quiz") {
+        setStep(state.step === 4 ? 5 : state.step + 1);
+      } else if (act === "pick-option") {
+        var idx = parseInt(target.getAttribute("data-index"), 10);
+        state.answers[state.step - 1] = QUIZ_DATA[state.step - 1].options[idx];
+        renderQuestion();
+      } else if (act === "restart-quiz") {
+        state.answers = {};
+        setStep(0);
+      } else if (act === "copy-card") {
+        var a0 = state.answers[0] || {};
+        var a1 = state.answers[1] || {};
+        var a2 = state.answers[2] || {};
+        var a3 = state.answers[3] || {};
+        var txt = "【SCENT MIRAGE 香氣靈感卡】\n生活節奏：" + (a0.tag || "日常覺察") + "\n偏好香調：" + (a1.family || "木質草本") + "\n質感偏好：" + (a2.tone || "沉靜留白") + "\n轉場時刻：" + (a3.time || "日常時段") + "\n（本卡僅供個人感官探索，無醫療療效）";
+        navigator.clipboard.writeText(txt);
+        
+        var btn = document.getElementById("ui-copy-btn");
+        btn.innerHTML = "<span>已複製到剪貼簿 ✓</span>";
+        setTimeout(function() {
+          btn.innerHTML = "<span>複製此靈感卡</span>";
+        }, 2000);
+      } else if (act === "open-oil-modal" || act === "quick-oil") {
+        var a0 = state.answers[0] || {};
+        var a1 = state.answers[1] || {};
+        var a2 = state.answers[2] || {};
+        var a3 = state.answers[3] || {};
+
+        var hasQuiz = state.answers[0] && state.answers[1];
+        var resultSummary = hasQuiz 
+          ? ((a3.time || "日常轉場") + "・" + (a2.tone || "沉靜") + "・" + (a1.family ? a1.family.split(" ")[0] : "木質調"))
+          : "日常轉場・客製香調";
+
+        var customMsg = encodeURIComponent(
+          "你好，我想預約 5ml 客製香氣滾珠油（HK$98）。\n" +
+          (hasQuiz ? ("測驗結果為：【" + resultSummary + "】\n想以此為基底進行調製，請問如何安排？") : "想直接了解客製香調與調配安排，謝謝！")
+        );
+
+        openModalWithActions(
+          "5ml 靈感卡客製香氣滾珠油 (HK$98)",
+          "<div class='space-y-2'>" +
+            "<div class='bg-sand/60 p-3 rounded-xl border border-line/70 text-ink'>" +
+              "<div class='text-[10px] text-subtle font-light'>" + (hasQuiz ? "已為你鎖定測驗偏好基底：" : "客製香調基底：") + "</div>" +
+              "<div class='font-medium text-xs mt-0.5 text-amberAccent'>【" + resultSummary + "】</div>" +
+            "</div>" +
+            "<p class='text-[11px] text-muted leading-relaxed font-light'>" +
+              "由調香師按單現調，使用琥珀色鋼珠瓶盛裝，香氣濃度嚴格控制於 1–2% 親膚安全範圍。確認後於 3–5 個工作天內寄出（運費另計，支援順豐速運 / 易寄取）。" +
+            "</p>" +
+          "</div>",
+          "<a href='https://wa.me/85261314101?text=" + customMsg + "' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-[#25D366] text-white text-xs tracking-wider rounded-xl hover:opacity-90 transition font-medium shadow-sm flex items-center justify-center gap-2'>" +
+            "<span>" + (hasQuiz ? "以測驗結果 WhatsApp 預約" : "WhatsApp 快速預約") + "</span>" +
+          "</a>" +
+          "<a href='https://ig.me/m/SCENTMIRAGE.LAB' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-paper border border-line text-ink text-xs tracking-wider rounded-xl hover:border-ink transition font-medium'>" +
+            "Instagram 私訊預約 (@SCENTMIRAGE.LAB)" +
+          "</a>"
+        );
+      } else if (act === "open-ws-modal" || act === "quick-workshop") {
+        var wsMsg = encodeURIComponent("你好，我想預約 10月27日 19:30 灣仔「心靈鏡像」調香工作坊席位（姓名： 人數：）：");
+        openModalWithActions(
+          "「心靈鏡像」調香工作坊 (HK$380)",
+          "<div class='space-y-2'>" +
+            "<p><strong>近期確認場次：</strong> 2026 年 10 月 27 日（週二）19:30 - 21:00</p>" +
+            "<p><strong>地點：</strong> 香港灣仔區獨立工作室（近灣仔地鐵站）</p>" +
+            "<p><strong>費用：</strong> HK$380 / 位（含所有調香材料與專屬作品）</p>" +
+            "<p class='text-[11px] text-subtle border-t border-line/60 pt-2'>* 小班制名額有限，請選擇下方慣用方式發送預約訊息以鎖定席位。</p>" +
+            "<p class='text-[10px] text-subtle/80'>* 本體驗以香氣聯想與個人創作為主，非醫療或心理諮商服務。</p>" +
+          "</div>",
+          "<a href='https://wa.me/85261314101?text=" + wsMsg + "' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-[#25D366] text-white text-xs tracking-wider rounded-xl hover:opacity-90 transition font-medium shadow-sm flex items-center justify-center gap-2'>" +
+            "<span>WhatsApp 快速預約席位</span>" +
+          "</a>" +
+          "<a href='https://ig.me/m/SCENTMIRAGE.LAB' target='_blank' rel='noopener noreferrer' class='block w-full text-center py-3 bg-paper border border-line text-ink text-xs tracking-wider rounded-xl hover:border-ink transition font-medium'>" +
+            "Instagram 私訊預約 (@SCENTMIRAGE.LAB)" +
+          "</a>"
+        );
+      } else if (act === "close-modal") {
+        document.getElementById("ui-modal-box").style.display = "none";
+      }
+    });
   </script>
 </body>
 </html>
