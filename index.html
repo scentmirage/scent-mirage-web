@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+TC:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
 
-  <!-- React 18 & Babel CDN (支援純前端 JSX 執行，免 Node 構建) -->
+  <!-- React 18 & Babel CDN -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -58,7 +58,6 @@
       background-attachment: fixed;
     }
 
-    /* 3D 翻牌專用樣式 */
     .perspective-1000 {
       perspective: 1000px;
     }
@@ -73,7 +72,6 @@
       transform: rotateY(180deg);
     }
 
-    /* 平滑過渡動畫 */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
@@ -90,7 +88,7 @@
     const { useState, useEffect } = React;
 
     // ==========================================
-    // 1. 單一資料源 (Single Source of Truth)
+    // 1. 單一資料源 (SSOT)
     // ==========================================
     const PRESCRIPTIONS = [
       {
@@ -140,9 +138,6 @@
       }
     ];
 
-    // ==========================================
-    // 2. 測驗問題資料 (Mapping: A->2, B->1, C->3, D->4, E->5)
-    // ==========================================
     const QUIZ_QUESTIONS = [
       {
         question: "回想最近的一週，你最常出現的狀態是？",
@@ -180,35 +175,71 @@
     ];
 
     // ==========================================
-    // 3. 通用頂部 Header 組件
+    // 2. 頂部導航與 Header (加入直接選購選單)
     // ==========================================
-    function Header({ onReset }) {
+    function Header({ onReset, onDirectCatalog, onOpenWorkshop }) {
       return (
-        <header className="text-center mb-8">
-          <div 
-            onClick={onReset}
-            className="inline-flex items-center gap-2 px-3 py-1 bg-sand/80 rounded-full border border-line/60 mb-2.5 cursor-pointer hover:bg-sand transition"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-amberAccent"></span>
-            <span className="text-[10px] tracking-[0.25em] uppercase text-muted font-medium">Apothecary Atelier</span>
-          </div>
-          <h1 
-            onClick={onReset}
-            className="font-cormorant text-3xl md:text-4xl tracking-[0.2em] font-medium uppercase text-ink cursor-pointer"
-          >
-            SCENT MIRAGE
-          </h1>
-          <p className="font-serif text-xs tracking-widest text-subtle mt-1 font-light">
-            靈魂處方箋 ｜ 日常感官留白練習
-          </p>
-        </header>
+        <div>
+          {/* 頂端極簡直達導覽列 */}
+          <nav className="flex justify-between items-center text-xs border-b border-line/70 pb-3 mb-6">
+            <div 
+              onClick={onReset}
+              className="font-cormorant text-xs tracking-[0.2em] uppercase text-subtle font-medium cursor-pointer"
+            >
+              ATELIER MENU
+            </div>
+            <div className="flex items-center gap-3.5 text-xs font-light">
+              <a 
+                href="https://scentmirage.gumroad.com/l/7-day-sensory-journal" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-muted hover:text-ink transition hover:underline"
+              >
+                香氣手札
+              </a>
+              <span className="text-line">|</span>
+              <button 
+                onClick={onDirectCatalog} 
+                className="text-muted hover:text-ink transition hover:underline cursor-pointer"
+              >
+                專屬處方油
+              </button>
+              <span className="text-line">|</span>
+              <button 
+                onClick={onOpenWorkshop} 
+                className="text-amberAccent hover:text-amberAccent/80 font-medium transition hover:underline cursor-pointer"
+              >
+                調香工作坊
+              </button>
+            </div>
+          </nav>
+
+          <header className="text-center mb-8">
+            <div 
+              onClick={onReset}
+              className="inline-flex items-center gap-2 px-3 py-1 bg-sand/80 rounded-full border border-line/60 mb-2.5 cursor-pointer hover:bg-sand transition"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-amberAccent"></span>
+              <span className="text-[10px] tracking-[0.25em] uppercase text-muted font-medium">Apothecary Atelier</span>
+            </div>
+            <h1 
+              onClick={onReset}
+              className="font-cormorant text-3xl md:text-4xl tracking-[0.2em] font-medium uppercase text-ink cursor-pointer"
+            >
+              SCENT MIRAGE
+            </h1>
+            <p className="font-serif text-xs tracking-widest text-subtle mt-1 font-light">
+              靈魂處方箋 ｜ 日常感官留白練習
+            </p>
+          </header>
+        </div>
       );
     }
 
     // ==========================================
-    // 4. 模組 1：主頁分流 (Homepage Routing)
+    // 3. 模組 1：主頁分流 (已移除箭頭、左右一致)
     // ==========================================
-    function HomeView({ onStartQuiz, onStartDraw }) {
+    function HomeView({ onStartQuiz, onStartDraw, onSkipToCatalog }) {
       return (
         <section className="bg-paperCard rounded-3xl p-8 md:p-12 shadow-salon border border-line text-center animate-fade-in relative overflow-hidden">
           <div className="w-12 h-12 bg-amberLight rounded-2xl flex items-center justify-center mx-auto mb-6 text-amberAccent border border-line/60">
@@ -227,30 +258,35 @@
             氣味是情緒的處方箋。請選擇你此刻最想與自己對話的方式：
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            {/* 按鈕 A：理性測驗 */}
+          {/* 兩側對齊、已移除左側箭頭 */}
+          <div className="flex flex-col sm:flex-row gap-3.5 max-w-md mx-auto">
             <button
               onClick={onStartQuiz}
               type="button"
-              className="flex-1 py-4 px-4 bg-ink text-paper rounded-2xl text-xs tracking-widest font-medium hover:bg-ink/90 active:scale-[0.99] transition shadow-md flex items-center justify-center gap-2 cursor-pointer group"
+              className="flex-1 py-4 px-4 bg-ink text-paper rounded-2xl text-xs tracking-widest font-medium hover:bg-ink/90 active:scale-[0.99] transition shadow-md flex items-center justify-center cursor-pointer text-center"
             >
-              <span>理性梳理：氣味潛意識測驗</span>
-              <svg className="w-4 h-4 group-hover:translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
+              理性梳理：氣味潛意識測驗
             </button>
 
-            {/* 按鈕 B：直覺抽卡 */}
             <button
               onClick={onStartDraw}
               type="button"
-              className="flex-1 py-4 px-4 bg-paper border border-line text-ink rounded-2xl text-xs tracking-widest font-medium hover:border-amberAccent hover:bg-amberLight/40 active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer"
+              className="flex-1 py-4 px-4 bg-paper border border-line text-ink rounded-2xl text-xs tracking-widest font-medium hover:border-amberAccent hover:bg-amberLight/40 active:scale-[0.99] transition flex items-center justify-center cursor-pointer text-center"
             >
-              <span>直覺指引：抽取今日靈感卡</span>
+              直覺指引：抽取今日靈感卡
             </button>
           </div>
 
-          <p className="text-[11px] text-subtle mt-8 leading-normal font-light">
+          {/* 首頁跳過測驗直達選購按鈕 */}
+          <button 
+            onClick={onSkipToCatalog}
+            type="button"
+            className="text-xs text-subtle hover:text-ink font-light underline transition py-2 mt-6 block mx-auto cursor-pointer"
+          >
+            跳過測驗，直接瀏覽全品項與工作坊預約 ➔
+          </button>
+
+          <p className="text-[11px] text-subtle mt-6 leading-normal font-light">
             * 僅供個人感官生活記錄，不作醫療或心理診斷。
           </p>
         </section>
@@ -258,7 +294,7 @@
     }
 
     // ==========================================
-    // 5. 模組 2：氣味潛意識測驗 (Quiz Funnel)
+    // 4. 模組 2：氣味潛意識測驗
     // ==========================================
     function QuizView({ onCompleteQuiz, onBackHome }) {
       const [currentQ, setCurrentQ] = useState(0);
@@ -275,13 +311,11 @@
         const nextAnswers = [...answers, targetId];
         setAnswers(nextAnswers);
 
-        // 點擊選項後自動延遲 0.5 秒進入下一題
         setTimeout(() => {
           if (currentQ < QUIZ_QUESTIONS.length - 1) {
             setCurrentQ(prev => prev + 1);
             setSelectedIndex(null);
           } else {
-            // 完成 Q3 後展示 1.5 秒 Loading 動畫
             setIsLoading(true);
             setTimeout(() => {
               const finalId = calculateScoring(nextAnswers);
@@ -291,7 +325,6 @@
         }, 500);
       };
 
-      // 計分邏輯：眾數 (Mode)；若 3 題皆不同 (平局)，以 Q3 選擇之 id 作為最終結果
       const calculateScoring = (ansArr) => {
         const counts = {};
         ansArr.forEach(id => { counts[id] = (counts[id] || 0) + 1; });
@@ -310,7 +343,6 @@
           }
         }
 
-        // 3 題各選不同 id (maxCount = 1) 或平局，直接採用 Q3 的答案
         if (maxCount === 1 || tie) {
           return ansArr[2];
         }
@@ -386,13 +418,12 @@
     }
 
     // ==========================================
-    // 6. 模組 3：靈感抽卡 (Card Draw Funnel)
+    // 5. 模組 3：靈感抽卡
     // ==========================================
     function CardDrawView({ onCardSelected, onBackHome }) {
       const [shuffledCards, setShuffledCards] = useState([]);
       const [flippedIndex, setFlippedIndex] = useState(null);
 
-      // 載入時使用 Math.random() 隨機洗牌 (Fisher-Yates)
       useEffect(() => {
         const arr = [...PRESCRIPTIONS];
         for (let i = arr.length - 1; i > 0; i--) {
@@ -405,8 +436,6 @@
       const handleCardClick = (index, cardId) => {
         if (flippedIndex !== null) return;
         setFlippedIndex(index);
-
-        // 翻牌完成後回傳 ID 渲染結果
         setTimeout(() => {
           onCardSelected(cardId);
         }, 650);
@@ -435,7 +464,6 @@
             </p>
           </div>
 
-          {/* 5 張牌容器 (點擊後翻牌並隱藏其他 4 張) */}
           <div className="flex justify-center items-center gap-2.5 sm:gap-4 overflow-x-auto py-4 px-1 min-h-[220px]">
             {shuffledCards.map((card, idx) => {
               const isChosen = flippedIndex === idx;
@@ -463,7 +491,6 @@
                   <div className={`relative w-full aspect-[2/3] rounded-2xl shadow-salon transform-style-3d transition-transform duration-700 ${
                     isChosen ? 'rotate-y-180' : ''
                   }`}>
-                    {/* 卡背 (預設朝上) */}
                     <div className="absolute inset-0 w-full h-full rounded-2xl border border-line bg-sand flex flex-col items-center justify-center p-2 text-center backface-hidden overflow-hidden">
                       <div className="w-full h-full border border-line/60 rounded-xl flex flex-col items-center justify-center bg-paperCard/50">
                         <span className="w-1.5 h-1.5 rounded-full bg-amberAccent mb-1"></span>
@@ -471,7 +498,6 @@
                       </div>
                     </div>
 
-                    {/* 卡面 (正面，翻轉後呈現) */}
                     <div className="absolute inset-0 w-full h-full rounded-2xl border border-amberAccent/40 bg-paperCard flex flex-col items-center justify-between p-2.5 shadow-float backface-hidden rotate-y-180 overflow-hidden">
                       <div className="w-full flex-1 rounded-xl bg-sand/60 flex items-center justify-center text-[11px] text-subtle font-serif border border-line/40 overflow-hidden">
                         <img 
@@ -498,89 +524,190 @@
     }
 
     // ==========================================
-    // 7. 模組 4：共用資料與結果展示組件 (Shared Result Component)
+    // 6. 模組 4：結果展示與完整品項目錄 (補回手札與工作坊)
     // ==========================================
-    function ResultView({ resultId, onReset }) {
+    function ResultView({ resultId, onReset, onOpenWorkshopModal }) {
       const data = PRESCRIPTIONS.find(item => item.id === resultId) || PRESCRIPTIONS[0];
 
       return (
-        <section className="bg-paperCard rounded-3xl p-7 md:p-9 shadow-float border border-line animate-fade-in relative overflow-hidden">
-          {/* 頂部標籤 */}
-          <div className="flex justify-between items-start border-b border-line pb-4 mb-6">
-            <div>
-              <span className="font-cormorant text-xs tracking-[0.3em] uppercase text-amberAccent font-semibold block mb-1">
-                Your Soul Prescription
+        <section className="space-y-8 animate-fade-in">
+          {/* 主處方展示卡 */}
+          <div className="bg-paperCard rounded-3xl p-7 md:p-9 shadow-float border border-line relative overflow-hidden">
+            <div className="flex justify-between items-start border-b border-line pb-4 mb-6">
+              <div>
+                <span className="font-cormorant text-xs tracking-[0.3em] uppercase text-amberAccent font-semibold block mb-1">
+                  Your Soul Prescription
+                </span>
+                <h3 className="font-serif text-xl md:text-2xl text-ink font-normal">
+                  {data.name}
+                </h3>
+              </div>
+              <span className="px-3 py-1 bg-sand text-amberAccent text-[11px] font-medium rounded-full border border-line/60">
+                專屬處方
               </span>
-              <h3 className="font-serif text-xl md:text-2xl text-ink font-normal">
-                {data.name}
-              </h3>
-            </div>
-            <span className="px-3 py-1 bg-sand text-amberAccent text-[11px] font-medium rounded-full border border-line/60">
-              專屬處方
-            </span>
-          </div>
-
-          {/* 卡牌圖片展示 (預留 placeholder 與降級保護) */}
-          <div className="w-full aspect-[16/9] sm:aspect-[21/9] rounded-2xl bg-sand/60 border border-line/80 overflow-hidden mb-6 flex items-center justify-center text-xs text-subtle font-serif">
-            <img 
-              src={data.image} 
-              alt={data.name} 
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-                e.currentTarget.parentElement.innerText = `[ ${data.name} 視覺意象卡 ]`;
-              }}
-              className="w-full h-full object-cover"
-            />
-          </div>
-
-          {/* 香調與描述 */}
-          <div className="space-y-4 mb-6 text-xs leading-relaxed">
-            <div className="bg-sand/40 border border-line/80 rounded-2xl p-4">
-              <span className="text-subtle block text-[11px] font-light mb-1">專屬調配香調</span>
-              <strong className="text-ink font-medium text-sm">{data.scent}</strong>
             </div>
 
-            <div className="bg-paper p-4 rounded-2xl border border-line/60">
-              <span className="text-subtle block text-[11px] font-light mb-1">感官處方註解</span>
-              <p className="text-muted font-light text-xs">{data.description}</p>
+            <div className="w-full aspect-[16/9] sm:aspect-[21/9] rounded-2xl bg-sand/60 border border-line/80 overflow-hidden mb-6 flex items-center justify-center text-xs text-subtle font-serif">
+              <img 
+                src={data.image} 
+                alt={data.name} 
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.parentElement.innerText = `[ ${data.name} 視覺意象卡 ]`;
+                }}
+                className="w-full h-full object-cover"
+              />
             </div>
 
-            <blockquote className="border-l-2 border-amberAccent pl-4 py-1 italic text-ink/90 font-serif text-sm">
-              {data.quote}
-            </blockquote>
+            <div className="space-y-4 mb-6 text-xs leading-relaxed">
+              <div className="bg-sand/40 border border-line/80 rounded-2xl p-4">
+                <span className="text-subtle block text-[11px] font-light mb-1">專屬調配香調</span>
+                <strong className="text-ink font-medium text-sm">{data.scent}</strong>
+              </div>
+
+              <div className="bg-paper p-4 rounded-2xl border border-line/60">
+                <span className="text-subtle block text-[11px] font-light mb-1">感官處方註解</span>
+                <p className="text-muted font-light text-xs">{data.description}</p>
+              </div>
+
+              <blockquote className="border-l-2 border-amberAccent pl-4 py-1 italic text-ink/90 font-serif text-sm">
+                {data.quote}
+              </blockquote>
+            </div>
+
+            {/* 專屬處方油下單 CTA */}
+            <div className="space-y-2 pt-1">
+              <a
+                href={data.stripeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 bg-ink text-paper text-xs tracking-[0.25em] font-medium rounded-2xl hover:bg-ink/90 active:scale-[0.99] transition shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>訂製我的專屬處方 (HKD $188)</span>
+                <svg className="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+
+              <p className="text-[11px] text-subtle text-center font-light pt-1">
+                * 結帳時可自選順豐到付或預付
+              </p>
+
+              <button
+                onClick={onReset}
+                type="button"
+                className="w-full py-2.5 text-xs text-subtle hover:text-ink font-light underline transition cursor-pointer text-center mt-1"
+              >
+                重新對話與探索
+              </button>
+            </div>
           </div>
 
-          {/* CTA 結帳按鈕 (直跳外部 Stripe Payment Link) */}
-          <div className="space-y-2 pt-2">
-            <a
-              href={data.stripeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-4 bg-ink text-paper text-xs tracking-[0.25em] font-medium rounded-2xl hover:bg-ink/90 active:scale-[0.99] transition shadow-md flex items-center justify-center gap-2 cursor-pointer"
+          {/* 補回：延伸日常練習與完整品項 (手札與工作坊) */}
+          <div id="catalog-section" className="space-y-4 pt-2">
+            <div className="flex items-center gap-2 px-1">
+              <span className="w-1 h-3.5 bg-amberAccent rounded-full"></span>
+              <h4 className="font-serif text-sm font-medium tracking-wider text-ink">
+                將感官練習延續至日常生活
+              </h4>
+            </div>
+
+            {/* 品項 1: 數位手札 */}
+            <div className="bg-paperCard p-6 rounded-3xl border border-line shadow-salon flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <span className="text-[10px] tracking-wider uppercase bg-sand px-2.5 py-0.5 rounded-full text-amberAccent font-medium border border-line/60">
+                  即時數位下載
+                </span>
+                <h5 className="font-serif text-base font-medium text-ink mt-2">《7 日香氣轉場手札》數位版</h5>
+                <p className="text-xs text-subtle mt-1 font-light">含 12 頁手札 PDF + A6 尺寸隨身卡</p>
+                <div className="text-sm font-semibold text-amberAccent mt-2">HK$78</div>
+              </div>
+              <a 
+                href="https://scentmirage.gumroad.com/l/7-day-sensory-journal" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-center px-6 py-3 bg-ink text-paper text-xs tracking-widest font-medium rounded-xl hover:bg-ink/90 active:scale-[0.99] transition shadow-md"
+              >
+                立即購買
+              </a>
+            </div>
+
+            {/* 品項 2: 工作坊 */}
+            <div className="bg-paperCard p-6 rounded-3xl border border-line shadow-salon flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] tracking-wider uppercase bg-sand px-2.5 py-0.5 rounded-full text-subtle font-medium border border-line/60">
+                    實體創作體驗
+                  </span>
+                  <span className="text-[10px] tracking-wider bg-amberLight text-amberAccent px-2 py-0.5 rounded-full font-medium border border-amberAccent/30">
+                    灣仔獨立沙龍
+                  </span>
+                </div>
+                <h5 className="font-serif text-base font-medium text-ink mt-2">「心靈鏡像」調香工作坊</h5>
+                <p className="text-xs text-subtle mt-1 font-light">90 分鐘獨立沙龍手作 ｜ 灣仔區小班制席位</p>
+                <div className="text-sm font-semibold text-amberAccent mt-2">HK$380</div>
+              </div>
+              <button 
+                onClick={onOpenWorkshopModal}
+                type="button" 
+                className="px-6 py-3 bg-ink text-paper border border-ink text-xs tracking-wider rounded-xl hover:bg-ink/90 transition font-medium cursor-pointer shadow-sm"
+              >
+                預約席位
+              </button>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // ==========================================
+    // 7. 工作坊預約 Modal 彈窗組件
+    // ==========================================
+    function WorkshopModal({ isOpen, onClose }) {
+      if (!isOpen) return null;
+      const wsMsg = encodeURIComponent("你好，我想預約灣仔「心靈鏡像」調香工作坊席位（姓名： 人數：）：");
+
+      return (
+        <div className="fixed inset-0 bg-ink/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-paperCard rounded-3xl p-7 max-w-sm w-full shadow-float border border-line animate-fade-in">
+            <h4 className="font-serif text-lg font-medium text-ink mb-2">「心靈鏡像」調香工作坊 (HK$380)</h4>
+            <div className="text-xs text-muted leading-relaxed mb-6 font-light space-y-2">
+              <p><strong>體驗時長：</strong> 90 分鐘獨立沙龍手作</p>
+              <p><strong>地點：</strong> 香港灣仔區獨立工作室（近灣仔地鐵站）</p>
+              <p><strong>費用：</strong> HK$380 / 位（含所有調香材料與專屬作品）</p>
+              <p className="text-[11px] text-subtle border-t border-line/60 pt-2">
+                * 極小班名額有限，請選擇下方慣用方式發送預約訊息以鎖定席位。
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <a 
+                href={`https://wa.me/85261314101?text=${wsMsg}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="block w-full text-center py-3 bg-[#25D366] text-white text-xs tracking-wider rounded-xl hover:opacity-90 transition font-medium shadow-sm"
+              >
+                WhatsApp 快速預約席位
+              </a>
+              <a 
+                href="https://ig.me/m/SCENTMIRAGE.LAB" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="block w-full text-center py-3 bg-paper border border-line text-ink text-xs tracking-wider rounded-xl hover:border-ink transition font-medium"
+              >
+                Instagram 私訊預約 (@SCENTMIRAGE.LAB)
+              </a>
+            </div>
+
+            <button 
+              onClick={onClose} 
+              type="button" 
+              className="w-full mt-3 py-2.5 border border-line text-xs text-subtle rounded-xl hover:bg-paper transition cursor-pointer font-light"
             >
-              <span>訂製我的專屬處方 (HKD $188)</span>
-              <svg className="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </a>
-
-            <p className="text-[11px] text-subtle text-center font-light pt-1">
-              * 結帳時可自選順豐到付或預付
-            </p>
-
-            <button
-              onClick={onReset}
-              type="button"
-              className="w-full py-2.5 text-xs text-subtle hover:text-ink font-light underline transition cursor-pointer text-center mt-2"
-            >
-              重新對話與探索
+              關閉
             </button>
           </div>
-
-          <p className="text-[10px] text-subtle text-center mt-4 font-light">
-            * 本處方為獨立調香沙龍按單調配，安全親膚稀釋，3–5 個工作天內寄出。
-          </p>
-        </section>
+        </div>
       );
     }
 
@@ -588,9 +715,9 @@
     // 8. 系統主控制器 (App Routing)
     // ==========================================
     function App() {
-      // 路由狀態: 'home' | 'quiz' | 'draw' | 'result'
       const [view, setView] = useState('home');
-      const [activeResultId, setActiveResultId] = useState(null);
+      const [activeResultId, setActiveResultId] = useState(1);
+      const [isWsOpen, setIsWsOpen] = useState(false);
 
       const handleStartQuiz = () => setView('quiz');
       const handleStartDraw = () => setView('draw');
@@ -605,21 +732,34 @@
         setView('result');
       };
 
+      const handleSkipToCatalog = () => {
+        setActiveResultId(1);
+        setView('result');
+        setTimeout(() => {
+          const el = document.getElementById('catalog-section');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      };
+
       const handleReset = () => {
-        setActiveResultId(null);
         setView('home');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       };
 
       return (
-        <div className="min-h-screen flex flex-col justify-between max-w-xl mx-auto px-5 py-8 md:py-12">
-          <Header onReset={handleReset} />
+        <div className="min-h-screen flex flex-col justify-between max-w-xl mx-auto px-5 py-6 md:py-10">
+          <Header 
+            onReset={handleReset} 
+            onDirectCatalog={handleSkipToCatalog}
+            onOpenWorkshop={() => setIsWsOpen(true)}
+          />
 
           <main className="flex-1 flex flex-col justify-center">
             {view === 'home' && (
               <HomeView 
                 onStartQuiz={handleStartQuiz} 
                 onStartDraw={handleStartDraw} 
+                onSkipToCatalog={handleSkipToCatalog}
               />
             )}
 
@@ -641,9 +781,15 @@
               <ResultView 
                 resultId={activeResultId} 
                 onReset={handleReset} 
+                onOpenWorkshopModal={() => setIsWsOpen(true)}
               />
             )}
           </main>
+
+          <WorkshopModal 
+            isOpen={isWsOpen} 
+            onClose={() => setIsWsOpen(false)} 
+          />
 
           <footer className="mt-14 pt-6 border-t border-line text-center text-[10px] text-subtle/70 font-mono tracking-wider">
             © 2026 SCENT MIRAGE APOTHECARY. All Rights Reserved.
