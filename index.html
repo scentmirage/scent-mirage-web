@@ -17,6 +17,7 @@
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     tailwind.config = {
@@ -86,6 +87,11 @@
 
   <script type="text/babel">
     const { useState, useEffect } = React;
+    const SUPABASE_URL = "YOUR_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+    const supabaseClient = window.supabase && SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("YOUR_") && SUPABASE_ANON_KEY.length > 30 && !SUPABASE_ANON_KEY.includes("YOUR_")
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
 
     // ==========================================
     // 1. 單一資料源 (SSOT：已覆寫 5 款產品及嚴格配方)
@@ -97,7 +103,7 @@
         name: "01 隱士 (The Hermit)",
         subtitle: "安定的情緒結界",
         scentFamily: "木質泥土調",
-        formula: "佛手柑 / 秘魯聖木 / 岩蘭草",
+        formula: "佛手柑 / 秘魯聖木 / 雪松木 / 乳香",
         concentration: "5% 純精油調配，無酒精配方",
         description: "適合社交步調緊湊、渴望靜心獨處、想在生活空間建立平靜邊界的你。",
         quote: "「世界太吵的時候，為自己留一段安靜的呼吸空間。」",
@@ -111,7 +117,7 @@
         name: "02 節制 (Temperance)",
         subtitle: "平靜的放鬆時刻",
         scentFamily: "草本樹脂調",
-        formula: "薰衣草 / 快樂鼠尾草 / 乳香",
+        formula: "薰衣草 / 天竺葵 / 岩蘭草 / 雪松木 / 乳香 / 肉豆蔻",
         concentration: "5% 純精油調配，無酒精配方",
         description: "適合節奏快、思緒密集、希望在入夜後營造舒適氛圍與深度放鬆的你。",
         quote: "「放慢呼吸的節奏，溫和安頓生活的所有起伏。」",
@@ -125,7 +131,7 @@
         name: "03 皇后 (The Empress)",
         subtitle: "溫柔的自我擁抱",
         scentFamily: "溫暖花果調",
-        formula: "甜橙 / 天竺葵 / 乳香",
+        formula: "西柚 / 天竺葵 / 乳香 / 廣藿香",
         concentration: "5% 純精油調配，無酒精配方",
         description: "適合渴望生活溫潤陪伴、感受溫柔托住、享受豐沛感官儀式感的你。",
         quote: "「溫柔對待日常的每一步，接納當下最真實的自己。」",
@@ -139,7 +145,7 @@
         name: "04 愚者 (The Fool)",
         subtitle: "清新的感官體驗",
         scentFamily: "清新柑橘調",
-        formula: "西柚 / 薄荷 / 絲柏",
+        formula: "西柚 / 甜橙 / 絲柏 / 快樂鼠尾草 / 薰衣草",
         concentration: "5% 純精油調配，無酒精配方",
         description: "適合日常切換、需要感官重置、渴望帶著輕盈節奏重新出發的你。",
         quote: "「深呼吸，讓感官煥然一新，自在前行。」",
@@ -153,7 +159,7 @@
         name: "05 力量 (Strength)",
         subtitle: "木質的溫暖底氣",
         scentFamily: "沉穩辛木調",
-        formula: "佛手柑 / 肉豆蔻 / 廣藿香",
+        formula: "佛手柑 / 乳香 / 廣藿香 / 甜橙",
         concentration: "5% 純精油調配，無酒精配方",
         description: "適合迎接全新日常挑戰、需要安定氣場與自我肯定時刻的你。",
         quote: "「於靜默之中，感受內在沉著而豐沛的底氣。」",
@@ -202,17 +208,17 @@
     // ==========================================
     // 2. 頂部導航與 Header
     // ==========================================
-    function Header({ onReset, onDirectCatalog, onOpenWorkshop }) {
+    function Header({ onReset, onDirectCatalog, onOpenWorkshop, onOpenCorporate, onOpenMember }) {
       return (
         <div>
-          <nav className="flex justify-between items-center text-xs border-b border-line/70 pb-3 mb-6">
+          <nav className="flex flex-col sm:flex-row sm:justify-between items-center gap-3 text-xs border-b border-line/70 pb-3 mb-6">
             <div 
               onClick={onReset}
               className="font-cormorant text-xs tracking-[0.2em] uppercase text-subtle font-medium cursor-pointer"
             >
               ATELIER MENU
             </div>
-            <div className="flex items-center gap-3.5 text-xs font-light">
+            <div className="flex flex-wrap justify-center items-center gap-x-2.5 gap-y-2 text-[11px] md:text-xs font-light">
               <a 
                 href="https://scentmirage.gumroad.com/l/7-day-sensory-journal" 
                 target="_blank" 
@@ -230,10 +236,24 @@
               </button>
               <span className="text-line">|</span>
               <button 
-                onClick={onOpenWorkshop} 
+                onClick={onOpenCorporate} 
                 className="text-amberAccent hover:text-amberAccent/80 font-medium transition hover:underline cursor-pointer"
               >
+                企業禮贈
+              </button>
+              <span className="text-line">|</span>
+              <button 
+                onClick={onOpenWorkshop} 
+                className="text-muted hover:text-ink transition hover:underline cursor-pointer"
+              >
                 調香工作坊
+              </button>
+              <span className="text-line">|</span>
+              <button 
+                onClick={onOpenMember} 
+                className="text-muted hover:text-ink transition hover:underline cursor-pointer"
+              >
+                會員登入
               </button>
             </div>
           </nav>
@@ -693,6 +713,230 @@
       );
     }
 
+    function CorporateGiftsView({ onBack }) {
+      const [sent, setSent] = useState(false);
+      const handleSubmit = (event) => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        const values = (key) => String(form.get(key) || "未提供").trim();
+        const scents = form.getAll("scents").join("、") || "待建議";
+        const custom = form.getAll("custom").join("、") || "待討論";
+        const message = [
+          "你好，我想查詢 SCENT MIRAGE 企業香氣禮贈方案。",
+          `公司／機構：${values("company")}`,
+          `聯絡人：${values("contact")}`,
+          `聯絡方式：${values("contactWay")}`,
+          `禮贈用途：${values("occasion")}`,
+          `預計數量：${values("quantity")} 支`,
+          `偏好香氣：${scents}`,
+          `期望交付日期：${values("deliveryDate")}`,
+          `客製項目：${custom}`,
+          `預算範圍：${values("budget")}`,
+          `補充想法：${values("notes")}`,
+          "我可在 WhatsApp 對話中補交 Logo 或參考檔案。"
+        ].join("\n");
+        window.open(`https://wa.me/85261314101?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+        setSent(true);
+      };
+      return (
+        <section className="space-y-7 animate-fade-in">
+          <div className="bg-paperCard rounded-3xl p-7 md:p-10 shadow-float border border-line relative overflow-hidden">
+            <div className="absolute -right-12 -top-12 w-48 h-48 rounded-full bg-amberLight/70 blur-2xl"></div>
+            <button onClick={onBack} className="relative text-xs text-subtle hover:text-ink underline mb-8 cursor-pointer">← 返回主頁</button>
+            <div className="relative max-w-2xl">
+              <span className="font-cormorant text-xs tracking-[0.3em] uppercase text-amberAccent font-semibold">SCENT MIRAGE · CORPORATE GIFTING</span>
+              <h2 className="font-serif text-2xl md:text-4xl leading-snug text-ink mt-3">以香氣，讓企業心意走進日常。</h2>
+              <p className="text-sm md:text-base text-muted leading-7 mt-4 max-w-xl">為品牌活動、VIP 客戶回禮、員工感謝與節慶贈禮，訂製一份可以帶走、也會被記住的日常香氣。</p>
+              <p className="text-xs md:text-sm text-subtle leading-6 mt-3">10ml 無酒精滾珠香水油（塗抹式，非噴霧），可從五款既定香氣中選擇，並搭配企業識別與祝福內容。</p>
+              <a href="#corporate-enquiry" className="inline-flex mt-7 px-6 py-3 rounded-xl bg-ink text-paper text-xs tracking-widest hover:bg-ink/90 transition">索取企業報價　↗</a>
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-3">
+            {[
+              ["01", "五款既定香氣", "依活動主題與受贈對象挑選；可在報價時確認香氣分配。"],
+              ["02", "品牌識別呈現", "可討論 Logo、活動名稱與祝福文字的呈現方式。"],
+              ["03", "由詢價到交付", "報價、校稿、樣品確認、製作與交付，逐步確認。"]
+            ].map(([number, title, text]) => (
+              <div key={number} className="bg-paperCard rounded-2xl p-5 border border-line shadow-salon">
+                <span className="font-cormorant text-amberAccent text-lg">{number}</span>
+                <h3 className="font-serif text-sm text-ink mt-2">{title}</h3>
+                <p className="text-xs text-subtle leading-relaxed mt-2">{text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-paperCard rounded-3xl p-6 md:p-8 border border-line shadow-salon">
+            <div className="flex items-center gap-2 mb-5"><span className="w-1 h-4 bg-amberAccent rounded-full"></span><h3 className="font-serif text-lg text-ink">五款日常香氣</h3></div>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {PRESCRIPTIONS.map((item) => (
+                <div key={item.id} className="flex gap-4 items-start bg-paper/70 rounded-2xl p-4 border border-line/70">
+                  <span className="font-cormorant text-amberAccent text-xl">{item.code}</span>
+                  <div><h4 className="font-serif text-sm text-ink">{item.name.split(" (")[0]}</h4><p className="text-xs text-subtle mt-1">{item.scentFamily}</p></div>
+                </div>
+              ))}
+            </div>
+            <p className="text-[11px] text-subtle mt-4 leading-relaxed">每支 10ml，無酒精滾珠塗抹式香水油，並非噴霧。企業方案以現有五款香氣為主；全新配方需另作打樣、安全與標示確認。</p>
+          </div>
+
+          <div className="bg-paperCard rounded-3xl p-6 md:p-8 border border-line shadow-salon">
+            <div className="flex items-center gap-2 mb-5"><span className="w-1 h-4 bg-amberAccent rounded-full"></span><h3 className="font-serif text-lg text-ink">把品牌心意放進細節</h3></div>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="rounded-2xl bg-sand/60 p-5 border border-line/70"><h4 className="font-serif text-sm text-ink">品牌識別</h4><p className="text-xs text-muted leading-relaxed mt-2">可討論瓶身或外包裝上的企業 Logo、活動名稱與簡短祝福；請提供有權使用的清晰 Logo 原檔。</p></div>
+              <div className="rounded-2xl bg-sand/60 p-5 border border-line/70"><h4 className="font-serif text-sm text-ink">企業故事卡</h4><p className="text-xs text-muted leading-relaxed mt-2">以摺頁故事卡承載品牌故事、活動主題或贈禮心意，讓香氣與訊息一起被帶走。</p></div>
+              <div className="rounded-2xl bg-sand/60 p-5 border border-line/70"><h4 className="font-serif text-sm text-ink">特別包裝／新香氣</h4><p className="text-xs text-muted leading-relaxed mt-2">特殊紙材、UV DTF、禮盒或全新香氣開發須先確認供應商、打樣、成本與交期，再另行報價。</p></div>
+            </div>
+            <p className="text-[11px] text-subtle mt-4">客製項目、不同 Logo／香氣版本、包裝、樣品與運費會按需求另行列入正式報價，不預設包含。</p>
+          </div>
+
+          <div className="bg-paperCard rounded-3xl p-6 md:p-8 border border-line shadow-salon">
+            <div className="flex items-center gap-2 mb-5"><span className="w-1 h-4 bg-amberAccent rounded-full"></span><h3 className="font-serif text-lg text-ink">合作流程與時間安排</h3></div>
+            <div className="space-y-3">
+              {[
+                ["01", "提交需求", "公司與聯絡資料、用途、數量、香氣分配、交付日期與地點。"],
+                ["02", "方案與正式報價", "確認產品、客製範圍、運費、交期與報價有效期；書面確認後排期。"],
+                ["03", "訂金與版稿", "訂金到帳及資料齊備後製作校稿；集中確認 Logo、文字、產品資訊及警語。"],
+                ["04", "樣品確認與製作", "如安排實體樣品，簽認後才進入大貨；製作期間按核准稿檢查數量與包裝。"],
+                ["05", "尾款與交付", "按正式報價列明的日期付清尾款，再安排送貨或交付。"]
+              ].map(([number, title, text]) => (
+                <div key={number} className="flex gap-4 rounded-2xl bg-paper/70 p-4 border border-line/70">
+                  <span className="font-cormorant text-amberAccent text-lg">{number}</span>
+                  <div><h4 className="text-xs font-medium text-ink">{title}</h4><p className="text-xs text-subtle leading-relaxed mt-1">{text}</p></div>
+                </div>
+              ))}
+            </div>
+            <p className="text-[11px] text-subtle mt-4 leading-relaxed">一般訂單建議至少預留 14 日；100 支或以上建議預留 3–4 週。此為規劃參考，特殊印刷、包裝、樣品及新配方需額外時間；最終交期以書面報價確認，並由訂金到帳、資料完整及稿件確認後起算。</p>
+          </div>
+
+          <div className="bg-sand/60 rounded-3xl p-6 border border-line">
+            <h3 className="font-serif text-lg text-ink mb-4">企業禮贈常見問題</h3>
+            <div className="space-y-4 text-xs leading-relaxed">
+              <div><h4 className="font-medium text-ink">這是噴霧香水嗎？</h4><p className="text-muted mt-1">不是，是 10ml 無酒精、滾珠塗抹式香水油。</p></div>
+              <div><h4 className="font-medium text-ink">可以開發專屬香氣嗎？</h4><p className="text-muted mt-1">可以另作專案評估；需先確認樣品、安全資料、產品標示、成本及交期，不屬於標準方案。</p></div>
+              <div><h4 className="font-medium text-ink">價錢如何計算？</h4><p className="text-muted mt-1">依數量、香氣分配、Logo／版面版本、故事卡、包裝、樣品與送貨需求逐項報價；最終以正式報價單為準。</p></div>
+              <div><h4 className="font-medium text-ink">Logo 檔案如何提供？</h4><p className="text-muted mt-1">先提交需求，收到 WhatsApp 對話後可直接附上向量檔或清晰圖片；請確保已獲授權使用。</p></div>
+            </div>
+          </div>
+
+          <div id="corporate-enquiry" className="bg-paperCard rounded-3xl p-6 md:p-8 shadow-float border border-line">
+            <span className="font-cormorant text-xs tracking-[0.3em] uppercase text-amberAccent font-semibold">LET'S CREATE A THOUGHTFUL GIFT</span>
+            <h3 className="font-serif text-xl text-ink mt-2">告訴我們你的送禮想法</h3>
+            <p className="text-xs text-subtle leading-relaxed mt-2 mb-6">填寫基本資料後會開啟 WhatsApp，讓你檢查並傳送詢價內容。Logo 檔案可在對話中另行附上；本頁不會儲存表單資料。</p>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <label className="block text-xs text-muted">公司／機構名稱<input name="company" required className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-3 text-sm text-ink outline-none focus:border-amberAccent" /></label>
+                <label className="block text-xs text-muted">聯絡人<input name="contact" required className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-3 text-sm text-ink outline-none focus:border-amberAccent" /></label>
+                <label className="block text-xs text-muted">WhatsApp 或電郵<input name="contactWay" required className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-3 text-sm text-ink outline-none focus:border-amberAccent" /></label>
+                <label className="block text-xs text-muted">禮贈用途<select name="occasion" className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-3 text-sm text-ink outline-none focus:border-amberAccent"><option>品牌活動</option><option>VIP 客戶回禮</option><option>員工感謝</option><option>節慶贈禮</option><option>其他</option></select></label>
+                <label className="block text-xs text-muted">預計數量（支）<input name="quantity" type="number" min="1" required className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-3 text-sm text-ink outline-none focus:border-amberAccent" /></label>
+                <label className="block text-xs text-muted">期望交付日期<input name="deliveryDate" type="date" className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-3 text-sm text-ink outline-none focus:border-amberAccent" /></label>
+              </div>
+              <fieldset><legend className="text-xs text-muted mb-2">偏好香氣（可多選）</legend><div className="grid grid-cols-2 sm:grid-cols-3 gap-2">{PRESCRIPTIONS.map((item) => <label key={item.id} className="flex items-center gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-xs text-ink"><input type="checkbox" name="scents" value={item.name.split(" (")[0]} className="accent-amber-700" />{item.name.split(" (")[0]}</label>)}</div></fieldset>
+              <fieldset><legend className="text-xs text-muted mb-2">想了解的客製項目（可多選）</legend><div className="grid grid-cols-2 gap-2">{[["企業 Logo", "企業 Logo／品牌識別"], ["祝福文字", "祝福文字／活動名稱"], ["故事卡", "企業故事摺頁卡"], ["特別包裝", "特別包裝／新香氣"]].map(([value, label]) => <label key={value} className="flex items-center gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-xs text-ink"><input type="checkbox" name="custom" value={value} className="accent-amber-700" />{label}</label>)}</div></fieldset>
+              <label className="block text-xs text-muted">預算範圍（選填）<input name="budget" placeholder="例如：每份預算或整體預算" className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-3 text-sm text-ink outline-none focus:border-amberAccent" /></label>
+              <label className="block text-xs text-muted">其他想法<textarea name="notes" rows="3" placeholder="活動日期、送禮對象、包裝想法等" className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-3 text-sm text-ink outline-none focus:border-amberAccent"></textarea></label>
+              <button type="submit" className="w-full rounded-xl bg-ink px-5 py-4 text-xs tracking-widest text-paper hover:bg-ink/90 transition">透過 WhatsApp 傳送詢價</button>
+              {sent && <p role="status" className="text-xs text-amberAccent text-center">已開啟 WhatsApp。請檢查內容並按傳送；若沒有開啟，請直接 WhatsApp 6131 4101。</p>}
+            </form>
+          </div>
+        </section>
+      );
+    }
+
+    function MemberModal({ isOpen, onClose, session, profile, onProfileChanged }) {
+      const [mode, setMode] = useState("login");
+      const [email, setEmail] = useState("");
+      const [password, setPassword] = useState("");
+      const [name, setName] = useState("");
+      const [message, setMessage] = useState("");
+      const [busy, setBusy] = useState(false);
+      const [profileName, setProfileName] = useState("");
+      useEffect(() => {
+        if (isOpen && window.location.hash.includes("type=recovery")) setMode("recover");
+      }, [isOpen]);
+      useEffect(() => {
+        if (profile?.display_name) setProfileName(profile.display_name);
+      }, [profile]);
+      const submit = async (event) => {
+        event.preventDefault();
+        setMessage("");
+        if (!supabaseClient) {
+          setMessage("會員登入尚未完成資料庫設定，請先設定 Supabase 專案網址、公開 anon key 及資料表。");
+          return;
+        }
+        setBusy(true);
+        try {
+          if (mode === "register") {
+            const { data, error } = await supabaseClient.auth.signUp({ email: email.trim(), password, options: { data: { display_name: name.trim() }, emailRedirectTo: window.location.origin } });
+            if (error) throw error;
+            setMessage(data.session ? "會員帳戶已建立。" : "確認電郵已寄出，請完成驗證後再登入。");
+          } else if (mode === "login") {
+            const { error } = await supabaseClient.auth.signInWithPassword({ email: email.trim(), password });
+            if (error) throw error;
+            setMessage("登入成功。");
+          } else if (mode === "reset") {
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email.trim(), { redirectTo: window.location.origin });
+            if (error) throw error;
+            setMessage("如該電郵已註冊，系統會寄出重設密碼連結。");
+          } else if (mode === "recover") {
+            const { error } = await supabaseClient.auth.updateUser({ password });
+            if (error) throw error;
+            setPassword("");
+            setMode("login");
+            setMessage("密碼已更新，請重新登入。");
+            await supabaseClient.auth.signOut();
+          }
+        } catch (error) {
+          setMessage(error?.message || "操作未能完成，請稍後再試。");
+        } finally {
+          setBusy(false);
+        }
+      };
+      const saveProfile = async (event) => {
+        event.preventDefault();
+        if (!supabaseClient || !session?.user?.id) return;
+        setBusy(true);
+        setMessage("");
+        const { error } = await supabaseClient.from("member_profiles").update({ display_name: profileName.trim(), updated_at: new Date().toISOString() }).eq("id", session.user.id);
+        setBusy(false);
+        if (error) setMessage(error.message);
+        else {
+          setMessage("會員資料已更新。");
+          onProfileChanged();
+        }
+      };
+      if (!isOpen) return null;
+      const lastScent = profile?.last_scent_id ? PRESCRIPTIONS.find((item) => item.id === Number(profile.last_scent_id)) : null;
+      return (
+        <div className="fixed inset-0 bg-ink/45 backdrop-blur-sm flex items-center justify-center p-4 z-50" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="member-title" className="bg-paperCard rounded-3xl p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-float border border-line animate-fade-in">
+            <div className="flex justify-between items-start gap-4 mb-5"><div><span className="font-cormorant text-xs tracking-[0.3em] uppercase text-amberAccent">SCENT MIRAGE MEMBERS</span><h3 id="member-title" className="font-serif text-xl text-ink mt-1">會員帳戶</h3></div><button onClick={onClose} aria-label="關閉" className="text-subtle hover:text-ink text-xl">×</button></div>
+            {!supabaseClient ? <div className="rounded-2xl bg-sand/60 border border-line p-5"><p className="text-sm text-ink font-medium">會員功能待啟用</p><p className="text-xs text-muted leading-relaxed mt-2">此版本已備妥註冊、登入、電郵驗證、重設密碼及香氣結果儲存流程。正式啟用前，管理者需連結 Supabase 並套用會員資料庫設定。</p></div> : session && mode !== "recover" ? <div>
+              <p className="text-xs text-muted leading-relaxed">已登入：{session.user.email}</p>
+              <form onSubmit={saveProfile} className="space-y-4 mt-5"><label className="block text-xs text-muted">顯示名稱<input value={profileName} onChange={(event) => setProfileName(event.target.value)} required className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-3 text-sm text-ink outline-none focus:border-amberAccent" /></label><button disabled={busy} className="w-full rounded-xl bg-ink px-4 py-3 text-xs text-paper disabled:opacity-50">{busy ? "處理中…" : "更新會員資料"}</button></form>
+              <div className="rounded-2xl bg-sand/60 border border-line p-4 mt-4"><p className="text-[11px] text-subtle">最近一次香氣探索</p><p className="font-serif text-sm text-ink mt-1">{lastScent ? `${lastScent.name}｜${lastScent.scentFamily}` : "完成香氣探索後，登入會員帳戶即可保存結果。"}</p></div>
+              <button onClick={async () => { await supabaseClient.auth.signOut(); setMessage("已登出。"); }} className="w-full mt-4 py-3 rounded-xl border border-line text-xs text-muted hover:bg-paper">登出</button>
+            </div> : <div>
+              <div className="flex gap-2 mb-5">{[["login", "登入"], ["register", "加入會員"]].map(([key, label]) => <button key={key} onClick={() => { setMode(key); setMessage(""); }} className={`flex-1 rounded-xl py-2.5 text-xs ${mode === key ? "bg-ink text-paper" : "bg-paper border border-line text-muted"}`}>{label}</button>)}</div>
+              <form onSubmit={submit} className="space-y-4">
+                {mode === "register" && <label className="block text-xs text-muted">稱呼<input value={name} onChange={(event) => setName(event.target.value)} required className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-3 text-sm text-ink outline-none focus:border-amberAccent" /></label>}
+                {mode !== "recover" && <label className="block text-xs text-muted">電郵地址<input type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} required className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-3 text-sm text-ink outline-none focus:border-amberAccent" /></label>}
+                {mode !== "reset" && <label className="block text-xs text-muted">{mode === "recover" ? "新密碼" : "密碼"}<input type="password" autoComplete={mode === "register" ? "new-password" : "current-password"} minLength="8" value={password} onChange={(event) => setPassword(event.target.value)} required className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-3 text-sm text-ink outline-none focus:border-amberAccent" /></label>}
+                {mode === "register" && <label className="flex items-start gap-2 rounded-xl border border-line bg-paper/70 p-3 text-[11px] text-muted leading-relaxed"><input type="checkbox" required className="mt-0.5 accent-amber-700" /><span>我已閱讀下方會員資料使用說明，並同意以電郵管理會員帳戶及保存香氣探索結果。</span></label>}
+                <button disabled={busy} className="w-full rounded-xl bg-ink px-4 py-3.5 text-xs tracking-widest text-paper disabled:opacity-50">{busy ? "處理中…" : mode === "register" ? "建立會員帳戶" : mode === "reset" ? "寄出重設連結" : mode === "recover" ? "更新密碼" : "登入"}</button>
+              </form>
+              {mode === "login" && <button onClick={() => { setMode("reset"); setMessage(""); }} className="text-xs text-subtle underline mt-4">忘記密碼？</button>}
+              {mode !== "login" && mode !== "recover" && <button onClick={() => { setMode("login"); setMessage(""); }} className="text-xs text-subtle underline mt-4 block">返回登入</button>}
+              {mode === "recover" && <p className="text-[11px] text-subtle mt-3">請輸入新密碼（最少 8 個字元）。</p>}
+            </div>}
+            {message && <p role="status" className="text-xs text-amberAccent leading-relaxed mt-4">{message}</p>}
+            <details className="text-[10px] text-subtle/80 leading-relaxed mt-5 border-t border-line pt-4"><summary className="cursor-pointer">會員資料使用說明</summary><p className="mt-2">登入電郵由 Supabase Auth 管理；會員資料表只保存稱呼、最近一次香氣探索結果及建立／更新時間，用於會員登入和個人化記錄。此頁不會公開會員資料，也不會保存詢價表格內容。正式開放註冊前，請先補上完整私隱聲明及資料查詢／刪除聯絡方式。</p></details>
+            <p className="text-[10px] text-subtle/80 leading-relaxed mt-3">本頁尚未設定購物積分或折扣規則。</p>
+          </div>
+        </div>
+      );
+    }
+
     // ==========================================
     // 7. 工作坊預約 Modal 彈窗組件
     // ==========================================
@@ -754,6 +998,47 @@
       const [view, setView] = useState('home');
       const [activeResultId, setActiveResultId] = useState(1);
       const [isWsOpen, setIsWsOpen] = useState(false);
+      const [isMemberOpen, setIsMemberOpen] = useState(false);
+      const [memberSession, setMemberSession] = useState(null);
+      const [memberProfile, setMemberProfile] = useState(null);
+
+      useEffect(() => {
+        if (!supabaseClient) return;
+        let mounted = true;
+        const loadProfile = async (userId) => {
+          const { data, error } = await supabaseClient.from("member_profiles").select("display_name,last_scent_id,created_at").eq("id", userId).maybeSingle();
+          if (mounted && !error) setMemberProfile(data);
+        };
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+          if (!mounted) return;
+          setMemberSession(session);
+          if (session?.user?.id) loadProfile(session.user.id);
+        });
+        const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+          if (!mounted) return;
+          setMemberSession(session);
+          if (!session) setMemberProfile(null);
+          else window.setTimeout(() => { if (mounted) loadProfile(session.user.id); }, 0);
+        });
+        return () => {
+          mounted = false;
+          subscription.unsubscribe();
+        };
+      }, []);
+
+      useEffect(() => {
+        if (!supabaseClient || !memberSession?.user?.id || view !== "result") return;
+        supabaseClient.from("member_profiles").upsert({ id: memberSession.user.id, last_scent_id: activeResultId, updated_at: new Date().toISOString() }, { onConflict: "id" }).then(({ error }) => {
+          if (error) console.error("Unable to save member scent choice", error);
+          else setMemberProfile((profile) => ({ ...(profile || {}), last_scent_id: activeResultId }));
+        });
+      }, [memberSession?.user?.id, activeResultId, view]);
+
+      const refreshMemberProfile = async () => {
+        if (!supabaseClient || !memberSession?.user?.id) return;
+        const { data, error } = await supabaseClient.from("member_profiles").select("display_name,last_scent_id,created_at").eq("id", memberSession.user.id).maybeSingle();
+        if (!error) setMemberProfile(data);
+      };
 
       const handleStartQuiz = () => setView('quiz');
       const handleStartDraw = () => setView('draw');
@@ -783,21 +1068,39 @@
       };
 
       return (
-        <div className="min-h-screen flex flex-col justify-between max-w-xl mx-auto px-5 py-6 md:py-10">
+                  <div className={`min-h-screen flex flex-col justify-between ${view === "corporate" ? "max-w-5xl" : "max-w-xl"} mx-auto px-5 py-6 md:py-10`}>
           <Header 
             onReset={handleReset} 
             onDirectCatalog={handleSkipToCatalog}
             onOpenWorkshop={() => setIsWsOpen(true)}
+            onOpenCorporate={() => { setView("corporate"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+            onOpenMember={() => setIsMemberOpen(true)}
           />
 
           <main className="flex-1 flex flex-col justify-center">
             {view === 'home' && (
-              <HomeView 
-                onStartQuiz={handleStartQuiz} 
-                onStartDraw={handleStartDraw} 
-                onSkipToCatalog={handleSkipToCatalog}
-              />
+              <>
+                <HomeView 
+                  onStartQuiz={handleStartQuiz} 
+                  onStartDraw={handleStartDraw} 
+                  onSkipToCatalog={handleSkipToCatalog}
+                />
+                <section className="grid sm:grid-cols-2 gap-3 mt-4 animate-fade-in">
+                  <button onClick={() => setView("corporate")} className="text-left bg-paperCard rounded-2xl p-5 border border-line shadow-salon hover:border-amberAccent transition">
+                    <span className="font-cormorant text-[10px] tracking-[0.25em] uppercase text-amberAccent">FOR BUSINESS</span>
+                    <span className="font-serif text-sm text-ink block mt-1">企業香氣禮贈</span>
+                    <span className="text-[11px] text-subtle block mt-1">為品牌活動與企業心意索取客製報價 →</span>
+                  </button>
+                  <button onClick={() => setIsMemberOpen(true)} className="text-left bg-paperCard rounded-2xl p-5 border border-line shadow-salon hover:border-amberAccent transition">
+                    <span className="font-cormorant text-[10px] tracking-[0.25em] uppercase text-amberAccent">MEMBER ACCOUNT</span>
+                    <span className="font-serif text-sm text-ink block mt-1">加入 SCENT MIRAGE 會員</span>
+                    <span className="text-[11px] text-subtle block mt-1">登入並保存最近一次香氣探索結果 →</span>
+                  </button>
+                </section>
+              </>
             )}
+
+            {view === 'corporate' && <CorporateGiftsView onBack={handleReset} />}
 
             {view === 'quiz' && (
               <QuizView 
@@ -822,6 +1125,13 @@
             )}
           </main>
 
+          <MemberModal
+            isOpen={isMemberOpen}
+            onClose={() => setIsMemberOpen(false)}
+            session={memberSession}
+            profile={memberProfile}
+            onProfileChanged={refreshMemberProfile}
+          />
           <WorkshopModal 
             isOpen={isWsOpen} 
             onClose={() => setIsWsOpen(false)} 
